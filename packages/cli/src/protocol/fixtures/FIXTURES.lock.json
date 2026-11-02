@@ -1,0 +1,8 @@
+{
+ "conformance.json": "fa1f2e3c8a030b28f2eec350b1638dbf613d61c99f58b4cafbb04b9f01f0d989",
+ "fuzz.json": "3a9b48f6f914f38774a06eb27103e9b4b9e6c28bf0ad61d575a03661ba1d3f3e",
+ "envelope.schema.json": "5c9fe3f3d0f8a561761f980cd2c0b17233e6be54ef8b39f07469f5743e8393ff",
+ "event.schema.json": "29684fcede35984c5429a04aff81e9973f82d50f7e05afbf1dfd4aca7e27579e",
+ "protocol": "sha256:protocol-v1-d680a891c4c8063b",
+ "source": "runtime-coordination/protocol (research repo); regenerate there, then update this lock"
+}

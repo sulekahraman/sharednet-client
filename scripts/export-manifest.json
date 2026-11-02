@@ -265,6 +265,359 @@
         "Compiled Room command help and wire state; imported with the compiled Rooms integration."
       ],
       "sourceCommit": "a145d587528d32bf0b658b3a3a4617990f5ae137"
+    },
+    "packages/cli/src/server/handler.ts": {
+      "source": "packages/server/src/handler.ts",
+      "sourceCommit": "590890a559f7212a67e130ebbe87fbcc19edd555",
+      "sourceSha256": "05f50aababf384f92a854cc018a28981a708c273a1e3aae29ab5a525307ba3b4",
+      "changes": [
+        "Ported for `sharednet local` from the private service repository; licensed MIT here with the rest of this repository.",
+        "protocol imports point at ../protocol/ inside the CLI package",
+        "The default store no longer builds the Postgres runtime repository (not ported): without a store passed in, the handler answers 503 service_unavailable, as the service does without a database."
+      ]
+    },
+    "packages/cli/src/server/memory-repository.ts": {
+      "source": "packages/server/src/memory-repository.ts",
+      "sourceCommit": "590890a559f7212a67e130ebbe87fbcc19edd555",
+      "sourceSha256": "23e3287404997b0b3e7782d3d0e426d7ed63028ef426be303204b68aab9e5012",
+      "changes": [
+        "Ported for `sharednet local` from the private service repository; licensed MIT here with the rest of this repository.",
+        "protocol imports point at ../protocol/ inside the CLI package"
+      ]
+    },
+    "packages/cli/src/server/repository.ts": {
+      "source": "packages/server/src/repository.ts",
+      "sourceCommit": "590890a559f7212a67e130ebbe87fbcc19edd555",
+      "sourceSha256": "cb8d88f006ce5478dc39748d16e364d698b8bab698260dbd0d20942f8f4993c8",
+      "changes": [
+        "Ported for `sharednet local` from the private service repository; licensed MIT here with the rest of this repository.",
+        "protocol imports point at ../protocol/ inside the CLI package"
+      ]
+    },
+    "packages/cli/src/server/compiled.ts": {
+      "source": "packages/server/src/compiled.ts",
+      "sourceCommit": "590890a559f7212a67e130ebbe87fbcc19edd555",
+      "sourceSha256": "56fa7c600b3ff9e22f6da79c97fa5f46b5e0d5cd783589b9b98864890ed159aa",
+      "changes": [
+        "Ported for `sharednet local` from the private service repository; licensed MIT here with the rest of this repository.",
+        "protocol imports point at ../protocol/ inside the CLI package"
+      ]
+    },
+    "packages/cli/src/server/contact-policy.ts": {
+      "source": "packages/server/src/contact-policy.ts",
+      "sourceCommit": "590890a559f7212a67e130ebbe87fbcc19edd555",
+      "sourceSha256": "380a43e0f78dc8c413e124d9480373934edfa70b0254977648ced5d8cb619266",
+      "changes": [
+        "Ported for `sharednet local` from the private service repository; licensed MIT here with the rest of this repository.",
+        "protocol imports point at ../protocol/ inside the CLI package"
+      ]
+    },
+    "packages/cli/src/server/decision-priority.ts": {
+      "source": "packages/server/src/decision-priority.ts",
+      "sourceCommit": "590890a559f7212a67e130ebbe87fbcc19edd555",
+      "sourceSha256": "4a6b7a5700bdf4c1c5542aaff2900c0a26571bf54c64f218e9f3a28d9b5357fc",
+      "changes": [
+        "Ported for `sharednet local` from the private service repository; licensed MIT here with the rest of this repository.",
+        "protocol imports point at ../protocol/ inside the CLI package"
+      ]
+    },
+    "packages/cli/src/server/cloud-room-grants.ts": {
+      "source": "packages/server/src/cloud-room-grants.ts",
+      "sourceCommit": "590890a559f7212a67e130ebbe87fbcc19edd555",
+      "sourceSha256": "f478d3481c2073f940eae9afdc5d9b93053a2e416a1855e6ce780839b510165b",
+      "changes": [
+        "Ported for `sharednet local` from the private service repository; licensed MIT here with the rest of this repository.",
+        "protocol imports point at ../protocol/ inside the CLI package"
+      ]
+    },
+    "packages/cli/src/server/instance-directory.ts": {
+      "source": "packages/server/src/instance-directory.ts",
+      "sourceCommit": "590890a559f7212a67e130ebbe87fbcc19edd555",
+      "sourceSha256": "f862d290f3822cfcfd0e227975bfe2d60798bd4277356723b3c467fdd50ca4e9",
+      "changes": [
+        "Ported for `sharednet local` from the private service repository; licensed MIT here with the rest of this repository.",
+        "protocol imports point at ../protocol/ inside the CLI package"
+      ]
+    },
+    "packages/cli/src/server/push.ts": {
+      "source": "packages/server/src/push.ts",
+      "sourceCommit": "590890a559f7212a67e130ebbe87fbcc19edd555",
+      "sourceSha256": "0b969745fd7863fc0f73481073c93e174e18117e7514e697180a71eaacc726cf",
+      "changes": [
+        "Ported for `sharednet local` from the private service repository; licensed MIT here with the rest of this repository.",
+        "protocol imports point at ../protocol/ inside the CLI package"
+      ]
+    },
+    "packages/cli/src/server/replying.ts": {
+      "source": "packages/server/src/replying.ts",
+      "sourceCommit": "590890a559f7212a67e130ebbe87fbcc19edd555",
+      "sourceSha256": "c20f663c96798de7aa765aea1a69fbbb28ea19731b07f657234efcf7af209e02",
+      "changes": [
+        "Ported for `sharednet local` from the private service repository; licensed MIT here with the rest of this repository.",
+        "protocol imports point at ../protocol/ inside the CLI package"
+      ]
+    },
+    "packages/cli/src/server/dev-server.ts": {
+      "source": "packages/server/src/dev-server.ts",
+      "sourceCommit": "590890a559f7212a67e130ebbe87fbcc19edd555",
+      "sourceSha256": "be11faa82a281ed4efc361b7e79b3c1564131ebfbfa48d174b74e09ef0c2fcff",
+      "changes": [
+        "Ported for `sharednet local` from the private service repository; licensed MIT here with the rest of this repository.",
+        "protocol imports point at ../protocol/ inside the CLI package"
+      ]
+    },
+    "packages/cli/src/server/cloud-room-grants.test.ts": {
+      "source": "packages/server/src/cloud-room-grants.test.ts",
+      "sourceCommit": "590890a559f7212a67e130ebbe87fbcc19edd555",
+      "sourceSha256": "1e2aef6262f7949d41da5b47d174cb5b9c297e93584e7a0517b82e91c80ffbea",
+      "changes": [
+        "Ported for `sharednet local` from the private service repository; licensed MIT here with the rest of this repository.",
+        "relative imports carry the .ts extension"
+      ]
+    },
+    "packages/cli/src/server/compiled-handler.test.ts": {
+      "source": "packages/server/src/compiled-handler.test.ts",
+      "sourceCommit": "590890a559f7212a67e130ebbe87fbcc19edd555",
+      "sourceSha256": "a818d79c4ee16028630583e876f8c53c26ac6a4f83a1df15334440f45deb9a72",
+      "changes": [
+        "Ported for `sharednet local` from the private service repository; licensed MIT here with the rest of this repository.",
+        "protocol imports point at ../protocol/ inside the CLI package",
+        "relative imports carry the .ts extension"
+      ]
+    },
+    "packages/cli/src/server/contact-decisions.test.ts": {
+      "source": "packages/server/src/contact-decisions.test.ts",
+      "sourceCommit": "590890a559f7212a67e130ebbe87fbcc19edd555",
+      "sourceSha256": "16b26c0f11ae4d812b7ebe829eda5b2874f257e33cd8b7c04725d4b530e5381d",
+      "changes": [
+        "Ported for `sharednet local` from the private service repository; licensed MIT here with the rest of this repository.",
+        "protocol imports point at ../protocol/ inside the CLI package",
+        "relative imports carry the .ts extension"
+      ]
+    },
+    "packages/cli/src/server/contact-http.test.ts": {
+      "source": "packages/server/src/contact-http.test.ts",
+      "sourceCommit": "590890a559f7212a67e130ebbe87fbcc19edd555",
+      "sourceSha256": "e09abc7fb96d53d42cf0aff84edaf4af3e4ce5b118827eb3190d591e7b1b1022",
+      "changes": [
+        "Ported for `sharednet local` from the private service repository; licensed MIT here with the rest of this repository.",
+        "protocol imports point at ../protocol/ inside the CLI package",
+        "relative imports carry the .ts extension"
+      ]
+    },
+    "packages/cli/src/server/contact-policy.test.ts": {
+      "source": "packages/server/src/contact-policy.test.ts",
+      "sourceCommit": "590890a559f7212a67e130ebbe87fbcc19edd555",
+      "sourceSha256": "8beb3ad2bd557599c23f4445cbbbe3af6c07e87c094c0b785f0fc0d46fe541e7",
+      "changes": [
+        "Ported for `sharednet local` from the private service repository; licensed MIT here with the rest of this repository.",
+        "relative imports carry the .ts extension"
+      ]
+    },
+    "packages/cli/src/server/decision-priority-evaluation.test.ts": {
+      "source": "packages/server/src/decision-priority-evaluation.test.ts",
+      "sourceCommit": "590890a559f7212a67e130ebbe87fbcc19edd555",
+      "sourceSha256": "902e6809beddf856732ab3c084f676ea0cade8fb0e683f6ce0b922b575bec34e",
+      "changes": [
+        "Ported for `sharednet local` from the private service repository; licensed MIT here with the rest of this repository.",
+        "protocol imports point at ../protocol/ inside the CLI package"
+      ]
+    },
+    "packages/cli/src/server/direct-room.test.ts": {
+      "source": "packages/server/src/direct-room.test.ts",
+      "sourceCommit": "590890a559f7212a67e130ebbe87fbcc19edd555",
+      "sourceSha256": "9a0669765edeee3880c50f08e30bf2944530362dad0a4fdfc6f472a30171fd09",
+      "changes": [
+        "Ported for `sharednet local` from the private service repository; licensed MIT here with the rest of this repository."
+      ]
+    },
+    "packages/cli/src/server/handler.test.ts": {
+      "source": "packages/server/src/handler.test.ts",
+      "sourceCommit": "590890a559f7212a67e130ebbe87fbcc19edd555",
+      "sourceSha256": "72f4e06c7298f0ee6e5b2b4ba53be37bab91757c113d315e771700377b8ea6c7",
+      "changes": [
+        "Ported for `sharednet local` from the private service repository; licensed MIT here with the rest of this repository.",
+        "protocol imports point at ../protocol/ inside the CLI package",
+        "relative imports carry the .ts extension",
+        "ids copied from real Rooms and accounts are replaced by synthetic ids of the same shape"
+      ]
+    },
+    "packages/cli/src/server/instance-directory.test.ts": {
+      "source": "packages/server/src/instance-directory.test.ts",
+      "sourceCommit": "590890a559f7212a67e130ebbe87fbcc19edd555",
+      "sourceSha256": "b607496a4d210d53ce38ca32151bd977340d88b8e45c1779d7ab219972f97918",
+      "changes": [
+        "Ported for `sharednet local` from the private service repository; licensed MIT here with the rest of this repository.",
+        "protocol imports point at ../protocol/ inside the CLI package"
+      ]
+    },
+    "packages/cli/src/server/mention-consent.test.ts": {
+      "source": "packages/server/src/mention-consent.test.ts",
+      "sourceCommit": "590890a559f7212a67e130ebbe87fbcc19edd555",
+      "sourceSha256": "f0cc585c195b9649ef436f6fb63b5938db9e04ab22a04b1c6248559593629ba7",
+      "changes": [
+        "Ported for `sharednet local` from the private service repository; licensed MIT here with the rest of this repository.",
+        "protocol imports point at ../protocol/ inside the CLI package",
+        "relative imports carry the .ts extension"
+      ]
+    },
+    "packages/cli/src/server/mention-inbox.test.ts": {
+      "source": "packages/server/src/mention-inbox.test.ts",
+      "sourceCommit": "590890a559f7212a67e130ebbe87fbcc19edd555",
+      "sourceSha256": "ff58cb32918a9e6dad712e845b3632c43e5737304ddfdc00285894331e7174d7",
+      "changes": [
+        "Ported for `sharednet local` from the private service repository; licensed MIT here with the rest of this repository."
+      ]
+    },
+    "packages/cli/src/server/network-mentions.test.ts": {
+      "source": "packages/server/src/network-mentions.test.ts",
+      "sourceCommit": "590890a559f7212a67e130ebbe87fbcc19edd555",
+      "sourceSha256": "66f05c51f804a2a7cb560d9b185fc833b441a66d90f478e5d7b24b1ec2868553",
+      "changes": [
+        "Ported for `sharednet local` from the private service repository; licensed MIT here with the rest of this repository.",
+        "protocol imports point at ../protocol/ inside the CLI package"
+      ]
+    },
+    "packages/cli/src/server/replying.test.ts": {
+      "source": "packages/server/src/replying.test.ts",
+      "sourceCommit": "590890a559f7212a67e130ebbe87fbcc19edd555",
+      "sourceSha256": "682296bf5790a1f33152291338ba8d8ce070b266cb4b4126519a26da3fcb5b87",
+      "changes": [
+        "Ported for `sharednet local` from the private service repository; licensed MIT here with the rest of this repository.",
+        "protocol imports point at ../protocol/ inside the CLI package",
+        "ids copied from real Rooms and accounts are replaced by synthetic ids of the same shape"
+      ]
+    },
+    "packages/cli/src/server/seat-taken.test.ts": {
+      "source": "packages/server/src/seat-taken.test.ts",
+      "sourceCommit": "590890a559f7212a67e130ebbe87fbcc19edd555",
+      "sourceSha256": "c2072199c692fc47df764a287606d023b67da9696d96b757c51d122caaf50858",
+      "changes": [
+        "Ported for `sharednet local` from the private service repository; licensed MIT here with the rest of this repository.",
+        "relative imports carry the .ts extension"
+      ]
+    },
+    "packages/cli/src/protocol/index.ts": {
+      "source": "packages/protocol/src/index.ts",
+      "sourceCommit": "590890a559f7212a67e130ebbe87fbcc19edd555",
+      "sourceSha256": "c95c9012f075262e84d52b3a8cde7bd855923c9bbdbd48b10ae8e884e4db9e91",
+      "changes": [
+        "Ported for `sharednet local` from the private service repository; licensed MIT here with the rest of this repository."
+      ]
+    },
+    "packages/cli/src/protocol/envelope.ts": {
+      "source": "packages/protocol/src/envelope.ts",
+      "sourceCommit": "590890a559f7212a67e130ebbe87fbcc19edd555",
+      "sourceSha256": "52cbd424bd71de9088fbda836732849f856868055518c1fcb68baf64caa2152a",
+      "changes": [
+        "Ported for `sharednet local` from the private service repository; licensed MIT here with the rest of this repository.",
+        "the reference envelope schema is imported from envelope-schema.ts, a TypeScript copy of fixtures/envelope.schema.json, so the compiled CLI needs no JSON module support"
+      ]
+    },
+    "packages/cli/src/protocol/room.ts": {
+      "source": "packages/protocol/src/room.ts",
+      "sourceCommit": "590890a559f7212a67e130ebbe87fbcc19edd555",
+      "sourceSha256": "1463f16d64e9f2b7e1092038aac78bc1fb6a1b7981756a03d443c47336e5b8d7",
+      "changes": [
+        "Ported for `sharednet local` from the private service repository; licensed MIT here with the rest of this repository.",
+        "relative imports carry the .ts extension"
+      ]
+    },
+    "packages/cli/src/protocol/obligations.ts": {
+      "source": "packages/protocol/src/obligations.ts",
+      "sourceCommit": "590890a559f7212a67e130ebbe87fbcc19edd555",
+      "sourceSha256": "c3e6149f085085d37124b142a6e9fdb1b3bcfd9f21b617f4f99f9a55379fa47f",
+      "changes": [
+        "Ported for `sharednet local` from the private service repository; licensed MIT here with the rest of this repository."
+      ]
+    },
+    "packages/cli/src/protocol/envelope.test.ts": {
+      "source": "packages/protocol/src/envelope.test.ts",
+      "sourceCommit": "590890a559f7212a67e130ebbe87fbcc19edd555",
+      "sourceSha256": "8641ffcefb12619d021d8de8dbd73e9958c72235d6bb584ca16355cd411b18e4",
+      "changes": [
+        "Ported for `sharednet local` from the private service repository; licensed MIT here with the rest of this repository.",
+        "relative imports carry the .ts extension",
+        "ids copied from real Rooms and accounts are replaced by synthetic ids of the same shape"
+      ]
+    },
+    "packages/cli/src/protocol/fixtures.test.ts": {
+      "source": "packages/protocol/src/fixtures.test.ts",
+      "sourceCommit": "590890a559f7212a67e130ebbe87fbcc19edd555",
+      "sourceSha256": "780a24bf2c3310f6799755750b88a919270d03a66ad3018c72ff00c8033c65fa",
+      "changes": [
+        "Ported for `sharednet local` from the private service repository; licensed MIT here with the rest of this repository.",
+        "fixtures are read from the sibling fixtures/ directory"
+      ]
+    },
+    "packages/cli/src/protocol/index.test.ts": {
+      "source": "packages/protocol/src/index.test.ts",
+      "sourceCommit": "590890a559f7212a67e130ebbe87fbcc19edd555",
+      "sourceSha256": "f0f9ea3882f0155f18ea1abb9a93e9ca98b5ed43a8ea6f07f96e26bdc4dde61c",
+      "changes": [
+        "Ported for `sharednet local` from the private service repository; licensed MIT here with the rest of this repository.",
+        "relative imports carry the .ts extension",
+        "ids copied from real Rooms and accounts are replaced by synthetic ids of the same shape"
+      ]
+    },
+    "packages/cli/src/protocol/obligations.test.ts": {
+      "source": "packages/protocol/src/obligations.test.ts",
+      "sourceCommit": "590890a559f7212a67e130ebbe87fbcc19edd555",
+      "sourceSha256": "fe201f37b94a1ab08ab4a96b7ef4111312a2fac40f193fc100a4d8608ba0f12e",
+      "changes": [
+        "Ported for `sharednet local` from the private service repository; licensed MIT here with the rest of this repository.",
+        "relative imports carry the .ts extension"
+      ]
+    },
+    "packages/cli/src/protocol/room.test.ts": {
+      "source": "packages/protocol/src/room.test.ts",
+      "sourceCommit": "590890a559f7212a67e130ebbe87fbcc19edd555",
+      "sourceSha256": "9d41eed9114ad4fc64dd12dca9acc80ef49d563238daa58144bf36f9321b1a23",
+      "changes": [
+        "Ported for `sharednet local` from the private service repository; licensed MIT here with the rest of this repository.",
+        "relative imports carry the .ts extension",
+        "fixtures are read from the sibling fixtures/ directory"
+      ]
+    },
+    "packages/cli/src/protocol/fixtures/FIXTURES.lock.json": {
+      "source": "packages/protocol/fixtures/FIXTURES.lock.json",
+      "sourceCommit": "590890a559f7212a67e130ebbe87fbcc19edd555",
+      "sourceSha256": "ab9096c3b69a6667ec908201f5f61c2afe02148ba31424167b1b1b8c245de344",
+      "changes": [
+        "Ported for `sharednet local` from the private service repository; licensed MIT here with the rest of this repository."
+      ]
+    },
+    "packages/cli/src/protocol/fixtures/conformance.json": {
+      "source": "packages/protocol/fixtures/conformance.json",
+      "sourceCommit": "590890a559f7212a67e130ebbe87fbcc19edd555",
+      "sourceSha256": "fa1f2e3c8a030b28f2eec350b1638dbf613d61c99f58b4cafbb04b9f01f0d989",
+      "changes": [
+        "Ported for `sharednet local` from the private service repository; licensed MIT here with the rest of this repository."
+      ]
+    },
+    "packages/cli/src/protocol/fixtures/envelope.schema.json": {
+      "source": "packages/protocol/fixtures/envelope.schema.json",
+      "sourceCommit": "590890a559f7212a67e130ebbe87fbcc19edd555",
+      "sourceSha256": "5c9fe3f3d0f8a561761f980cd2c0b17233e6be54ef8b39f07469f5743e8393ff",
+      "changes": [
+        "Ported for `sharednet local` from the private service repository; licensed MIT here with the rest of this repository."
+      ]
+    },
+    "packages/cli/src/protocol/fixtures/event.schema.json": {
+      "source": "packages/protocol/fixtures/event.schema.json",
+      "sourceCommit": "590890a559f7212a67e130ebbe87fbcc19edd555",
+      "sourceSha256": "29684fcede35984c5429a04aff81e9973f82d50f7e05afbf1dfd4aca7e27579e",
+      "changes": [
+        "Ported for `sharednet local` from the private service repository; licensed MIT here with the rest of this repository."
+      ]
+    },
+    "packages/cli/src/protocol/fixtures/fuzz.json": {
+      "source": "packages/protocol/fixtures/fuzz.json",
+      "sourceCommit": "590890a559f7212a67e130ebbe87fbcc19edd555",
+      "sourceSha256": "3a9b48f6f914f38774a06eb27103e9b4b9e6c28bf0ad61d575a03661ba1d3f3e",
+      "changes": [
+        "Ported for `sharednet local` from the private service repository; licensed MIT here with the rest of this repository."
+      ]
     }
   },
   "privateTestsRetainedAtSource": [
@@ -365,6 +718,11 @@
     "docs/verification/2026-10-26-goal-mode-trigger-eval.md",
     "docs/verification/2026-10-26-goal-mode-trigger-eval.json",
     "CITATION.cff",
-    "docs/assets/sharednet-logo.svg"
+    "docs/assets/sharednet-logo.svg",
+    "packages/cli/src/local.ts",
+    "packages/cli/src/local.test.ts",
+    "packages/cli/src/protocol/envelope-schema.ts",
+    "packages/cli/src/protocol/envelope-schema.test.ts",
+    "docs/local-server.md"
   ]
 }

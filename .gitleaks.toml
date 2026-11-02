@@ -6,3 +6,15 @@ useDefault = true
 id = "sharednet-capability"
 description = "SharedNet bearer capability"
 regex = '''\b(?:snk|sni|rit|rmt|clp|shr|afk)_[A-Za-z0-9_-]{43}\b'''
+
+# The ported server tests use fixed UUIDs as idempotency keys and contact-rule ids, and one
+# sentence that says it holds no secret; the generic rule reads those as keys. Only lines of
+# exactly these shapes are allowed (a path allowlist would hide real keys in whole files).
+[[allowlists]]
+description = "Synthetic UUIDs and sample text in the ported server and protocol tests"
+regexTarget = "line"
+regexes = [
+  '''"idempotency-key": "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"''',
+  '''const key="[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";''',
+  '''"nothing secret here, i_RedactIns1 and p_RedactPr01 stay"''',
+]
