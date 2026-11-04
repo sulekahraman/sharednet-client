@@ -1,0 +1,2112 @@
+{
+ "protocol": "sha256:protocol-v1-d680a891c4c8063b",
+ "fixtures": [
+  {
+   "name": "wrong_actor_acceptance",
+   "members": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E"
+   ],
+   "events": [
+    {
+     "type": "work.request",
+     "actor": "A",
+     "work_id": "W1",
+     "to": [
+      "B"
+     ],
+     "payload": {},
+     "refs": {},
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.accept",
+     "actor": "C",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {},
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.accept",
+     "actor": "B",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {},
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    }
+   ],
+   "outcomes": [
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 1
+    },
+    {
+     "accepted": false,
+     "code": "TARGET_MISMATCH",
+     "binding": false,
+     "seq": null
+    },
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 2
+    }
+   ],
+   "digest": "sha256:5496f0668622755641c552cd"
+  },
+  {
+   "name": "verification_before_review",
+   "members": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E"
+   ],
+   "events": [
+    {
+     "type": "work.request",
+     "actor": "A",
+     "work_id": "W1",
+     "to": [
+      "B"
+     ],
+     "payload": {},
+     "refs": {},
+     "clauses": [
+      {
+       "kind": "verify",
+       "id": "v",
+       "verifier": "C"
+      }
+     ],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "verification.pass",
+     "actor": "C",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {
+      "result_ref": null,
+      "requirement": "v",
+      "evidence": "sha256:e"
+     },
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.accept",
+     "actor": "B",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {},
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.result",
+     "actor": "B",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {
+      "artifacts": {
+       "patch": "sha256:p"
+      }
+     },
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "verification.pass",
+     "actor": "C",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {
+      "result_ref": "sha256:50406034aa4b46a9a02db8c2",
+      "requirement": "v",
+      "evidence": "sha256:e"
+     },
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    }
+   ],
+   "outcomes": [
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 1
+    },
+    {
+     "accepted": false,
+     "code": "ILLEGAL_TRANSITION",
+     "binding": false,
+     "seq": null
+    },
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 2
+    },
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 3
+    },
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 4
+    }
+   ],
+   "digest": "sha256:3ff646275ebc9540e2a0ab3d"
+  },
+  {
+   "name": "stale_result_after_cancel_and_supersession",
+   "members": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E"
+   ],
+   "events": [
+    {
+     "type": "work.request",
+     "actor": "A",
+     "work_id": "W1",
+     "to": [
+      "B"
+     ],
+     "payload": {},
+     "refs": {},
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.accept",
+     "actor": "B",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {},
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.cancel",
+     "actor": "A",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {},
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.result",
+     "actor": "B",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {
+      "artifacts": {}
+     },
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.request",
+     "actor": "A",
+     "work_id": "W2",
+     "to": [
+      "C"
+     ],
+     "payload": {},
+     "refs": {
+      "supersedes": "W1"
+     },
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.result",
+     "actor": "B",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {
+      "artifacts": {}
+     },
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.request",
+     "actor": "A",
+     "work_id": "W3",
+     "to": [
+      "C"
+     ],
+     "payload": {},
+     "refs": {
+      "supersedes": "W2"
+     },
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    }
+   ],
+   "outcomes": [
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 1
+    },
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 2
+    },
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 3
+    },
+    {
+     "accepted": false,
+     "code": "STALE_COMMITMENT",
+     "binding": false,
+     "seq": null
+    },
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 4
+    },
+    {
+     "accepted": false,
+     "code": "STALE_COMMITMENT",
+     "binding": false,
+     "seq": null
+    },
+    {
+     "accepted": false,
+     "code": "STALE_COMMITMENT",
+     "binding": false,
+     "seq": null
+    }
+   ],
+   "digest": "sha256:000301a67376f237eda4eec0"
+  },
+  {
+   "name": "missing_deliverable",
+   "members": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E"
+   ],
+   "events": [
+    {
+     "type": "work.request",
+     "actor": "A",
+     "work_id": "W1",
+     "to": [
+      "B"
+     ],
+     "payload": {},
+     "refs": {},
+     "clauses": [
+      {
+       "kind": "deliverables",
+       "names": [
+        "report",
+        "patch"
+       ]
+      }
+     ],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.accept",
+     "actor": "B",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {},
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.result",
+     "actor": "B",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {
+      "artifacts": {
+       "report": "sha256:r"
+      }
+     },
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.result",
+     "actor": "B",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {
+      "artifacts": {
+       "report": "sha256:r",
+       "patch": "sha256:p"
+      }
+     },
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    }
+   ],
+   "outcomes": [
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 1
+    },
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 2
+    },
+    {
+     "accepted": false,
+     "code": "MISSING_EVIDENCE",
+     "binding": false,
+     "seq": null
+    },
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 3
+    }
+   ],
+   "digest": "sha256:c0e03291cbffcb66bd556dcb"
+  },
+  {
+   "name": "post_terminal_declined",
+   "members": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E"
+   ],
+   "events": [
+    {
+     "type": "work.request",
+     "actor": "A",
+     "work_id": "W1",
+     "to": [
+      "B"
+     ],
+     "payload": {},
+     "refs": {},
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.decline",
+     "actor": "B",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {},
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.accept",
+     "actor": "B",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {},
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.result",
+     "actor": "B",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {
+      "artifacts": {}
+     },
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.resolve",
+     "actor": "A",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {},
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.cancel",
+     "actor": "A",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {},
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    }
+   ],
+   "outcomes": [
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 1
+    },
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 2
+    },
+    {
+     "accepted": false,
+     "code": "STALE_COMMITMENT",
+     "binding": false,
+     "seq": null
+    },
+    {
+     "accepted": false,
+     "code": "STALE_COMMITMENT",
+     "binding": false,
+     "seq": null
+    },
+    {
+     "accepted": false,
+     "code": "STALE_COMMITMENT",
+     "binding": false,
+     "seq": null
+    },
+    {
+     "accepted": false,
+     "code": "STALE_COMMITMENT",
+     "binding": false,
+     "seq": null
+    }
+   ],
+   "digest": "sha256:bd0bab668cb8ba5f88cab391"
+  },
+  {
+   "name": "post_terminal_resolved",
+   "members": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E"
+   ],
+   "events": [
+    {
+     "type": "work.request",
+     "actor": "A",
+     "work_id": "W1",
+     "to": [
+      "B"
+     ],
+     "payload": {
+      "task": "review X"
+     },
+     "refs": {},
+     "clauses": [
+      {
+       "kind": "verify",
+       "id": "v",
+       "verifier": "C"
+      }
+     ],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.accept",
+     "actor": "B",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {},
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.result",
+     "actor": "B",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {
+      "artifacts": {
+       "patch": "sha256:p"
+      }
+     },
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "verification.pass",
+     "actor": "C",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {
+      "result_ref": "sha256:50406034aa4b46a9a02db8c2",
+      "requirement": "v",
+      "evidence": "sha256:e"
+     },
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.resolve",
+     "actor": "A",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {},
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.accept",
+     "actor": "B",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {},
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.result",
+     "actor": "B",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {
+      "artifacts": {}
+     },
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "verification.pass",
+     "actor": "C",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {
+      "result_ref": "sha256:50406034aa4b46a9a02db8c2",
+      "requirement": "v",
+      "evidence": "sha256:e"
+     },
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.cancel",
+     "actor": "A",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {},
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    }
+   ],
+   "outcomes": [
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 1
+    },
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 2
+    },
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 3
+    },
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 4
+    },
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 5
+    },
+    {
+     "accepted": false,
+     "code": "STALE_COMMITMENT",
+     "binding": false,
+     "seq": null
+    },
+    {
+     "accepted": false,
+     "code": "STALE_COMMITMENT",
+     "binding": false,
+     "seq": null
+    },
+    {
+     "accepted": false,
+     "code": "STALE_COMMITMENT",
+     "binding": false,
+     "seq": null
+    },
+    {
+     "accepted": false,
+     "code": "STALE_COMMITMENT",
+     "binding": false,
+     "seq": null
+    }
+   ],
+   "digest": "sha256:9125ec934a9d5463746d3485"
+  },
+  {
+   "name": "post_terminal_expired",
+   "members": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E"
+   ],
+   "events": [
+    {
+     "type": "work.request",
+     "actor": "A",
+     "work_id": "W1",
+     "to": [
+      "B"
+     ],
+     "payload": {},
+     "refs": {},
+     "clauses": [
+      {
+       "kind": "expire",
+       "t": 5,
+       "outcome": "EXPIRED"
+      }
+     ],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "clock.tick",
+     "actor": "room_service",
+     "work_id": null,
+     "to": [],
+     "payload": {
+      "t": 10
+     },
+     "refs": {},
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.accept",
+     "actor": "B",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {},
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    }
+   ],
+   "outcomes": [
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 1
+    },
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 2
+    },
+    {
+     "accepted": false,
+     "code": "STALE_COMMITMENT",
+     "binding": false,
+     "seq": null
+    }
+   ],
+   "digest": "sha256:df7b1b073b89a4300e7c065e"
+  },
+  {
+   "name": "resolve_requires_review_and_requester",
+   "members": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E"
+   ],
+   "events": [
+    {
+     "type": "work.request",
+     "actor": "A",
+     "work_id": "W1",
+     "to": [
+      "B"
+     ],
+     "payload": {
+      "task": "review X"
+     },
+     "refs": {},
+     "clauses": [
+      {
+       "kind": "verify",
+       "id": "v",
+       "verifier": "C"
+      }
+     ],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.accept",
+     "actor": "B",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {},
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.result",
+     "actor": "B",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {
+      "artifacts": {
+       "patch": "sha256:p"
+      }
+     },
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.resolve",
+     "actor": "A",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {},
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "verification.pass",
+     "actor": "C",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {
+      "result_ref": "sha256:50406034aa4b46a9a02db8c2",
+      "requirement": "v",
+      "evidence": "sha256:e"
+     },
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.resolve",
+     "actor": "B",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {},
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.resolve",
+     "actor": "A",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {},
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    }
+   ],
+   "outcomes": [
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 1
+    },
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 2
+    },
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 3
+    },
+    {
+     "accepted": false,
+     "code": "MISSING_EVIDENCE",
+     "binding": false,
+     "seq": null
+    },
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 4
+    },
+    {
+     "accepted": false,
+     "code": "TARGET_MISMATCH",
+     "binding": false,
+     "seq": null
+    },
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 5
+    }
+   ],
+   "digest": "sha256:9125ec934a9d5463746d3485"
+  },
+  {
+   "name": "quorum_threshold_and_duplicate_voter",
+   "members": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E"
+   ],
+   "events": [
+    {
+     "type": "work.request",
+     "actor": "A",
+     "work_id": "W1",
+     "to": [
+      "B"
+     ],
+     "payload": {
+      "task": "review X"
+     },
+     "refs": {},
+     "clauses": [
+      {
+       "kind": "quorum",
+       "id": "q",
+       "eligible": [
+        "C",
+        "D",
+        "E"
+       ],
+       "q": 2
+      }
+     ],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.accept",
+     "actor": "B",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {},
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.result",
+     "actor": "B",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {
+      "artifacts": {
+       "patch": "sha256:p"
+      }
+     },
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "verification.pass",
+     "actor": "C",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {
+      "result_ref": "sha256:50406034aa4b46a9a02db8c2",
+      "requirement": "q",
+      "evidence": "sha256:e"
+     },
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "verification.pass",
+     "actor": "C",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {
+      "result_ref": "sha256:50406034aa4b46a9a02db8c2",
+      "requirement": "q",
+      "evidence": "sha256:e"
+     },
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "verification.pass",
+     "actor": "D",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {
+      "result_ref": "sha256:50406034aa4b46a9a02db8c2",
+      "requirement": "q",
+      "evidence": "sha256:e"
+     },
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "verification.fail",
+     "actor": "E",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {
+      "result_ref": "sha256:50406034aa4b46a9a02db8c2",
+      "requirement": "q",
+      "evidence": "sha256:e"
+     },
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.resolve",
+     "actor": "A",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {},
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    }
+   ],
+   "outcomes": [
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 1
+    },
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 2
+    },
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 3
+    },
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 4
+    },
+    {
+     "accepted": false,
+     "code": "DUPLICATE_VOTE",
+     "binding": false,
+     "seq": null
+    },
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 5
+    },
+    {
+     "accepted": false,
+     "code": "ILLEGAL_TRANSITION",
+     "binding": false,
+     "seq": null
+    },
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 6
+    }
+   ],
+   "digest": "sha256:ad4309ff0633f00850583a05"
+  },
+  {
+   "name": "quorum_without_veto_needs_majority_of_fails",
+   "members": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E"
+   ],
+   "events": [
+    {
+     "type": "work.request",
+     "actor": "A",
+     "work_id": "W1",
+     "to": [
+      "B"
+     ],
+     "payload": {
+      "task": "review X"
+     },
+     "refs": {},
+     "clauses": [
+      {
+       "kind": "quorum",
+       "id": "q",
+       "eligible": [
+        "C",
+        "D",
+        "E"
+       ],
+       "q": 2
+      }
+     ],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.accept",
+     "actor": "B",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {},
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.result",
+     "actor": "B",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {
+      "artifacts": {
+       "patch": "sha256:p"
+      }
+     },
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "verification.fail",
+     "actor": "C",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {
+      "result_ref": "sha256:50406034aa4b46a9a02db8c2",
+      "requirement": "q",
+      "evidence": "sha256:e"
+     },
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "verification.fail",
+     "actor": "D",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {
+      "result_ref": "sha256:50406034aa4b46a9a02db8c2",
+      "requirement": "q",
+      "evidence": "sha256:e"
+     },
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.resolve",
+     "actor": "A",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {},
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    }
+   ],
+   "outcomes": [
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 1
+    },
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 2
+    },
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 3
+    },
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 4
+    },
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 5
+    },
+    {
+     "accepted": false,
+     "code": "STALE_COMMITMENT",
+     "binding": false,
+     "seq": null
+    }
+   ],
+   "digest": "sha256:d2365f91f4dcc348170c71d5"
+  },
+  {
+   "name": "veto_is_fail_fast",
+   "members": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E"
+   ],
+   "events": [
+    {
+     "type": "work.request",
+     "actor": "A",
+     "work_id": "W1",
+     "to": [
+      "B"
+     ],
+     "payload": {
+      "task": "review X"
+     },
+     "refs": {},
+     "clauses": [
+      {
+       "kind": "quorum",
+       "id": "q",
+       "eligible": [
+        "C",
+        "D",
+        "E"
+       ],
+       "q": 2
+      },
+      {
+       "kind": "veto",
+       "eligible": [
+        "E"
+       ]
+      }
+     ],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.accept",
+     "actor": "B",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {},
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.result",
+     "actor": "B",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {
+      "artifacts": {
+       "patch": "sha256:p"
+      }
+     },
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "verification.fail",
+     "actor": "E",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {
+      "result_ref": "sha256:50406034aa4b46a9a02db8c2",
+      "requirement": "q",
+      "evidence": "sha256:e"
+     },
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "verification.pass",
+     "actor": "C",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {
+      "result_ref": "sha256:50406034aa4b46a9a02db8c2",
+      "requirement": "q",
+      "evidence": "sha256:e"
+     },
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    }
+   ],
+   "outcomes": [
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 1
+    },
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 2
+    },
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 3
+    },
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 4
+    },
+    {
+     "accepted": false,
+     "code": "STALE_COMMITMENT",
+     "binding": false,
+     "seq": null
+    }
+   ],
+   "digest": "sha256:3784d50f782a2afc3da443c2"
+  },
+  {
+   "name": "idempotent_retry",
+   "members": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E"
+   ],
+   "events": [
+    {
+     "type": "work.request",
+     "actor": "A",
+     "work_id": "W1",
+     "to": [
+      "B"
+     ],
+     "payload": {},
+     "refs": {},
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.accept",
+     "actor": "B",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {},
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": "k1"
+    },
+    {
+     "type": "work.accept",
+     "actor": "B",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {},
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": "k1"
+    }
+   ],
+   "outcomes": [
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 1
+    },
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 2
+    },
+    {
+     "accepted": true,
+     "code": "DUPLICATE",
+     "binding": false,
+     "seq": 2
+    }
+   ],
+   "digest": "sha256:5496f0668622755641c552cd"
+  },
+  {
+   "name": "missing_causal_parent",
+   "members": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E"
+   ],
+   "events": [
+    {
+     "type": "work.request",
+     "actor": "A",
+     "work_id": "W1",
+     "to": [
+      "B"
+     ],
+     "payload": {},
+     "refs": {},
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.accept",
+     "actor": "B",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {},
+     "clauses": [],
+     "parents": [
+      "sha256:missing"
+     ],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.accept",
+     "actor": "B",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {},
+     "clauses": [],
+     "parents": [
+      "sha256:e073dfe41101bc4161afd49f"
+     ],
+     "idempotency_key": null
+    }
+   ],
+   "outcomes": [
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 1
+    },
+    {
+     "accepted": false,
+     "code": "MISSING_PARENT",
+     "binding": false,
+     "seq": null
+    },
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 2
+    }
+   ],
+   "digest": "sha256:5496f0668622755641c552cd"
+  },
+  {
+   "name": "unsupported_version_and_unknown_clause",
+   "members": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E"
+   ],
+   "events": [
+    {
+     "type": "work.request",
+     "actor": "A",
+     "work_id": "W1",
+     "to": [
+      "B"
+     ],
+     "payload": {},
+     "refs": {},
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.accept",
+     "actor": "B",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {},
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null,
+     "version": "sha256:protocol-v2"
+    },
+    {
+     "type": "work.accept",
+     "actor": "B",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {},
+     "clauses": [
+      {
+       "kind": "priority",
+       "level": "high"
+      }
+     ],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.accept",
+     "actor": "B",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {},
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    }
+   ],
+   "outcomes": [
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 1
+    },
+    {
+     "accepted": false,
+     "code": "UNSUPPORTED_PROTOCOL",
+     "binding": false,
+     "seq": null
+    },
+    {
+     "accepted": false,
+     "code": "UNKNOWN_TYPED_CLAUSE",
+     "binding": false,
+     "seq": null
+    },
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 2
+    }
+   ],
+   "digest": "sha256:5496f0668622755641c552cd"
+  },
+  {
+   "name": "prose_is_nonbinding",
+   "members": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E"
+   ],
+   "events": [
+    {
+     "type": "work.request",
+     "actor": "A",
+     "work_id": "W1",
+     "to": [
+      "B"
+     ],
+     "payload": {},
+     "refs": {},
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "message",
+     "actor": "B",
+     "work_id": null,
+     "to": [],
+     "payload": {
+      "text": "Sure, I'll do it. Done!"
+     },
+     "refs": {},
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.accept",
+     "actor": "B",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {},
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    }
+   ],
+   "outcomes": [
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 1
+    },
+    {
+     "accepted": true,
+     "code": null,
+     "binding": false,
+     "seq": 2
+    },
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 3
+    }
+   ],
+   "digest": "sha256:5496f0668622755641c552cd"
+  },
+  {
+   "name": "join_guard_and_bad_predicate",
+   "members": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E"
+   ],
+   "events": [
+    {
+     "type": "work.request",
+     "actor": "A",
+     "work_id": "W1",
+     "to": [
+      "B"
+     ],
+     "payload": {},
+     "refs": {},
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.request",
+     "actor": "A",
+     "work_id": "W2",
+     "to": [
+      "C"
+     ],
+     "payload": {},
+     "refs": {},
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.request",
+     "actor": "A",
+     "work_id": "W9",
+     "to": [
+      "D"
+     ],
+     "payload": {},
+     "refs": {},
+     "clauses": [
+      {
+       "kind": "resolve_if",
+       "predicate": {
+        "op": "resolved",
+        "work": "W7"
+       }
+      }
+     ],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.request",
+     "actor": "A",
+     "work_id": "W3",
+     "to": [
+      "D"
+     ],
+     "payload": {},
+     "refs": {},
+     "clauses": [
+      {
+       "kind": "resolve_if",
+       "predicate": {
+        "op": "and",
+        "args": [
+         {
+          "op": "resolved",
+          "work": "W1"
+         },
+         {
+          "op": "resolved",
+          "work": "W2"
+         }
+        ]
+       }
+      }
+     ],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.accept",
+     "actor": "B",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {},
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.result",
+     "actor": "B",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {
+      "artifacts": {}
+     },
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.accept",
+     "actor": "C",
+     "work_id": "W2",
+     "to": [],
+     "payload": {},
+     "refs": {},
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.result",
+     "actor": "C",
+     "work_id": "W2",
+     "to": [],
+     "payload": {},
+     "refs": {
+      "artifacts": {}
+     },
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.accept",
+     "actor": "D",
+     "work_id": "W3",
+     "to": [],
+     "payload": {},
+     "refs": {},
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.result",
+     "actor": "D",
+     "work_id": "W3",
+     "to": [],
+     "payload": {},
+     "refs": {
+      "artifacts": {}
+     },
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.resolve",
+     "actor": "A",
+     "work_id": "W3",
+     "to": [],
+     "payload": {},
+     "refs": {},
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.resolve",
+     "actor": "A",
+     "work_id": "W1",
+     "to": [],
+     "payload": {},
+     "refs": {},
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.resolve",
+     "actor": "A",
+     "work_id": "W2",
+     "to": [],
+     "payload": {},
+     "refs": {},
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "work.resolve",
+     "actor": "A",
+     "work_id": "W3",
+     "to": [],
+     "payload": {},
+     "refs": {},
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    }
+   ],
+   "outcomes": [
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 1
+    },
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 2
+    },
+    {
+     "accepted": false,
+     "code": "BAD_PREDICATE",
+     "binding": false,
+     "seq": null
+    },
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 3
+    },
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 4
+    },
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 5
+    },
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 6
+    },
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 7
+    },
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 8
+    },
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 9
+    },
+    {
+     "accepted": false,
+     "code": "MISSING_EVIDENCE",
+     "binding": false,
+     "seq": null
+    },
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 10
+    },
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 11
+    },
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 12
+    }
+   ],
+   "digest": "sha256:aa7974af17a4a85b8e0c6c47"
+  },
+  {
+   "name": "clock_must_be_monotone_and_from_service",
+   "members": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E"
+   ],
+   "events": [
+    {
+     "type": "clock.tick",
+     "actor": "room_service",
+     "work_id": null,
+     "to": [],
+     "payload": {
+      "t": 5
+     },
+     "refs": {},
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "clock.tick",
+     "actor": "room_service",
+     "work_id": null,
+     "to": [],
+     "payload": {
+      "t": 3
+     },
+     "refs": {},
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    },
+    {
+     "type": "clock.tick",
+     "actor": "A",
+     "work_id": null,
+     "to": [],
+     "payload": {
+      "t": 9
+     },
+     "refs": {},
+     "clauses": [],
+     "parents": [],
+     "idempotency_key": null
+    }
+   ],
+   "outcomes": [
+    {
+     "accepted": true,
+     "code": null,
+     "binding": true,
+     "seq": 1
+    },
+    {
+     "accepted": false,
+     "code": "CLOCK_NOT_MONOTONE",
+     "binding": false,
+     "seq": null
+    },
+    {
+     "accepted": false,
+     "code": "TARGET_MISMATCH",
+     "binding": false,
+     "seq": null
+    }
+   ],
+   "digest": "sha256:a7d6699bd8552cfe0290b4f7"
+  }
+ ]
+}

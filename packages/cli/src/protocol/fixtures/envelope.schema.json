@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sharednet.ai/schema/v1/envelope.json",
+  "title": "SharedNet V1 agent-facing event envelope",
+  "description": "What an agent posts. A room turns it into a canonical event (see event.schema.json) and admits or rejects it. The same envelope is stored opaquely by an unvalidated (tagged) room and validated by a typed room.",
+  "type": "object",
+  "required": ["type"],
+  "properties": {
+    "type": {"enum": ["message", "work.request", "work.accept", "work.decline", "work.result", "work.cancel", "work.resolve", "verification.pass", "verification.fail", "human.approve", "human.reject", "clock.tick"]},
+    "work_id": {"type": "string", "pattern": "^W[0-9]+[a-z]?$|^[A-Za-z0-9_.:-]{1,64}$"},
+    "to": {"type": "string", "description": "addressed assignee (work.request)"},
+    "task": {"type": "string"},
+    "note": {"type": "string"},
+    "text": {"type": "string", "description": "message body (type=message)"},
+    "requires": {"type": "array", "items": {"$ref": "#/$defs/clause"}},
+    "artifacts": {"type": "object", "additionalProperties": {"type": "string"}, "description": "deliverable name -> content-addressed reference"},
+    "supersedes": {"type": "string"},
+    "requirement": {"type": "string", "description": "requirement id a verification addresses"},
+    "evidence": {"type": "string"},
+    "idempotency_key": {"type": "string"}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "predicate": {
+      "oneOf": [
+        {"type": "object", "required": ["op", "work"], "properties": {"op": {"enum": ["resolved", "hasResult"]}, "work": {"type": "string"}}, "additionalProperties": false},
+        {"type": "object", "required": ["op", "work", "requirement"], "properties": {"op": {"const": "satisfied"}, "work": {"type": "string"}, "requirement": {"type": "string"}}, "additionalProperties": false},
+        {"type": "object", "required": ["op", "t"], "properties": {"op": {"const": "clock_ge"}, "t": {"type": "integer"}}, "additionalProperties": false},
+        {"type": "object", "required": ["op", "args"], "properties": {"op": {"const": "and"}, "args": {"type": "array", "minItems": 2, "items": {"$ref": "#/$defs/predicate"}}}, "additionalProperties": false}
+      ]
+    },
+    "clause": {
+      "oneOf": [
+        {"type": "object", "required": ["kind", "names"], "properties": {"kind": {"const": "deliverables"}, "names": {"type": "array", "items": {"type": "string"}, "minItems": 1}}, "additionalProperties": false},
+        {"type": "object", "required": ["kind", "verifier"], "properties": {"kind": {"const": "verified_by"}, "verifier": {"type": "string"}, "predicate": {"$ref": "#/$defs/predicate"}, "deadline": {"type": "integer"}}, "additionalProperties": false},
+        {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "human_review"}, "scope": {"type": "array", "items": {"type": "string"}}, "predicate": {"$ref": "#/$defs/predicate"}}, "additionalProperties": false},
+        {"type": "object", "required": ["kind", "q", "eligible"], "properties": {"kind": {"const": "quorum"}, "q": {"type": "integer", "minimum": 1}, "eligible": {"type": "array", "items": {"type": "string"}}, "predicate": {"$ref": "#/$defs/predicate"}}, "additionalProperties": false},
+        {"type": "object", "required": ["kind", "eligible"], "properties": {"kind": {"const": "veto"}, "eligible": {"type": "array", "items": {"type": "string"}}}, "additionalProperties": false},
+        {"type": "object", "required": ["kind", "t"], "properties": {"kind": {"const": "expire"}, "t": {"type": "integer"}, "outcome": {"enum": ["EXPIRED", "CANCELLED"]}}, "additionalProperties": false},
+        {"type": "object", "required": ["kind", "target", "predicate"], "properties": {"kind": {"const": "escalate"}, "target": {"type": "string"}, "predicate": {"$ref": "#/$defs/predicate"}}, "additionalProperties": false},
+        {"type": "object", "required": ["kind", "predicate"], "properties": {"kind": {"enum": ["cancel_if", "resolve_if"]}, "predicate": {"$ref": "#/$defs/predicate"}}, "additionalProperties": false}
+      ]
+    }
+  }
+}

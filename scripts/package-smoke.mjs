@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { execFile } from "node:child_process";
+import { execFile, spawn } from "node:child_process";
 import { createHash } from "node:crypto";
 import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -35,7 +35,7 @@ try {
   for (const path of ["bin/sharednet.js", "dist/main.js", "dist/cli.js", "dist/cli.d.ts", "LICENSE", "package.json"]) {
     assert(files.includes(path), `Missing packaged entry: ${path}`);
   }
-  assert(files.every((path) => /^(?:bin\/sharednet\.js|dist\/[\w-]+\.(?:js|d\.ts)|package\.json|README\.md|LICENSE)$/.test(path)), "Unexpected tarball contents");
+  assert(files.every((path) => /^(?:bin\/sharednet\.js|dist\/(?:server\/|protocol\/)?[\w-]+\.(?:js|d\.ts)|package\.json|README\.md|LICENSE)$/.test(path)), "Unexpected tarball contents");
   const tarball = join(artifacts, pack.filename);
   const consumer = join(scratch, "consumer");
   await mkdir(consumer);
@@ -68,6 +68,25 @@ try {
   assert.equal(failure?.code, 2, "Installed executable must return its usage exit code");
   assert.equal(failure.stdout, "");
   assert.equal(JSON.parse(failure.stderr).error.code, "unknown_command");
+  // The packed server answers: `sharednet local` starts, serves the API, and stops on SIGTERM.
+  const local = spawn(join(consumer, "node_modules/.bin/sharednet"), ["local", "--port", "0", "--json"], {
+    cwd: consumer, env: { ...env, NODE_OPTIONS: "--no-experimental-strip-types" }, stdio: ["ignore", "pipe", "pipe"],
+  });
+  const exited = new Promise((resolve) => local.once("exit", (code) => resolve(code)));
+  const announced = await new Promise((resolve, reject) => {
+    let out = "";
+    local.stdout.on("data", (chunk) => {
+      out += chunk;
+      if (out.includes("\n")) resolve(JSON.parse(out.slice(0, out.indexOf("\n"))));
+    });
+    exited.then((code) => reject(new Error(`sharednet local exited ${code} before it was ready`)));
+    setTimeout(() => reject(new Error("sharednet local did not start within 10 s")), 10_000);
+  });
+  const discovery = await fetch(`${announced.base_url}/api/v1`);
+  assert.equal(discovery.status, 200, "The local server must answer the API discovery route");
+  local.kill("SIGTERM");
+  assert.equal(await exited, 0, "sharednet local must stop cleanly on SIGTERM");
+  await assert.rejects(readFile(announced.env_file), { code: "ENOENT" }, "sharednet local must remove its key file when it stops");
   const sha256 = createHash("sha256").update(await readFile(tarball)).digest("hex");
   await writeFile(join(artifacts, "cli-smoke.json"), JSON.stringify({ name: pack.name, version: pack.version, tarball: pack.filename, sha256, files }, null, 2) + "\n");
   console.log(`Installed-package smoke passed: ${pack.filename}; sha256=${sha256}`);

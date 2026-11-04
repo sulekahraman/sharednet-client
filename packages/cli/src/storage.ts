@@ -206,6 +206,10 @@ async function readSecureFile(path: string): Promise<string | null> {
 }
 
 async function writeSecureJson(path: string, value: unknown): Promise<void> {
+  return writeSecureText(path, `${JSON.stringify(value)}\n`);
+}
+
+async function writeSecureText(path: string, text: string): Promise<void> {
   const parent = dirname(path);
   await ensureSecureDirectory(parent);
 
@@ -215,7 +219,7 @@ async function writeSecureJson(path: string, value: unknown): Promise<void> {
   let handle;
   try {
     handle = await open(temp, constants.O_CREAT | constants.O_EXCL | constants.O_WRONLY, 0o600);
-    await handle.writeFile(`${JSON.stringify(value)}\n`, "utf8");
+    await handle.writeFile(text, "utf8");
     await handle.sync();
     await handle.close();
     handle = undefined;
@@ -232,6 +236,15 @@ async function writeSecureJson(path: string, value: unknown): Promise<void> {
     await unlink(temp).catch(() => undefined);
     throw error;
   }
+}
+
+/** Where `sharednet local` leaves its address and key for a shell to `source`: one owner-only file per port. */
+export function localServerEnvFile(paths: StoragePaths, port: number): string {
+  return join(paths.stateDir, "local", `${port}.env`);
+}
+
+export async function writeLocalServerEnv(path: string, text: string): Promise<void> {
+  await writeSecureText(path, text);
 }
 
 async function createSecureJsonIfAbsent(path: string, value: unknown): Promise<boolean> {

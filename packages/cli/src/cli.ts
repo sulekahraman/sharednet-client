@@ -135,6 +135,8 @@ const optionValueNames = new Set([
   "harness-mode",
   "kickoff",
   "type",
+  "host",
+  "port",
 ]);
 const booleanOptionNames = new Set(["new", "private", "quiet-checks", "mention-gate", "task-gate"]);
 
@@ -850,6 +852,31 @@ async function goalServeDemoCommand(
   });
 }
 
+/** `sharednet local [--port 3001] [--host 127.0.0.1|0.0.0.0]`: the SharedNet API in memory on this machine. */
+async function localCommand(
+  args: string[],
+  globals: GlobalArguments,
+  dependencies: ResolvedDependencies,
+): Promise<unknown> {
+  if (globals.sessionId !== undefined) {
+    throw localError("invalid_option", "The --session option is not valid for sharednet local.");
+  }
+  const parsed = parseArguments(args);
+  assertOnlyOptions(parsed, ["host", "port"]);
+  assertPositionals(parsed, 0);
+  // The server loads only for this command, so every other command starts as fast as before.
+  const { parseLocalHost, parseLocalPort, runLocalServer } = await import("./local.ts");
+  return runLocalServer(
+    { host: parseLocalHost(option(parsed, "host")), port: parseLocalPort(option(parsed, "port")), json: globals.json },
+    {
+      env: dependencies.env,
+      stdout: dependencies.stdout,
+      stderr: dependencies.stderr,
+      ...(dependencies.signal ? { signal: dependencies.signal } : {}),
+    },
+  );
+}
+
 async function execute(
   globals: GlobalArguments,
   dependencies: ResolvedDependencies,
@@ -882,9 +909,12 @@ async function execute(
   if (resource === "goal") {
     return goalCommand(action, commandArgs, globals, dependencies);
   }
+  if (resource === "local") {
+    return localCommand(globals.args.slice(1), globals, dependencies);
+  }
   throw localError(
     "unknown_command",
-    "Use login, whoami, join/say/read/wait/ack/watch/handed/add/rooms/requests/accept/deny/reach/timer, task claim/done/list, wake/wake set/off/check, balance/redeem/pay/ledger, upload/download/files, act/open/deliver, or session start/status, room create/list/invite/add/join/post/messages, goal start/run/serve-demo/watch/export, and decision list/approve/deny.",
+    "Use login, whoami, join/say/read/wait/ack/watch/handed/add/rooms/requests/accept/deny/reach/timer, task claim/done/list, wake/wake set/off/check, balance/redeem/pay/ledger, upload/download/files, act/open/deliver, or session start/status, room create/list/invite/add/join/post/messages, goal start/run/serve-demo/watch/export, decision list/approve/deny, and local.",
   );
 }
 

@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sharednet.ai/schema/v1/event.json",
+  "title": "SharedNet V1 canonical room event",
+  "description": "What a room makes of an agent's envelope (see envelope.schema.json) before it admits or rejects it. The room fills `actor` from the authenticated sender, which is why an agent never supplies it and cannot claim to have been someone else. This schema describes well-formedness only. Admission decides acceptance, and the fixtures contain well-formed events that admission is required to reject: one whose `version` names an unsupported protocol (UNSUPPORTED_PROTOCOL) and one carrying a clause of an unknown kind (UNKNOWN_TYPED_CLAUSE). Constraining `version` or `clauses[].kind` to known values here would stop those events reaching admission at all, so neither is constrained.",
+  "type": "object",
+  "required": ["type", "actor", "work_id", "to", "payload", "refs", "clauses", "parents", "idempotency_key"],
+  "additionalProperties": false,
+  "properties": {
+    "type": {
+      "description": "The event vocabulary, identical to envelope.schema.json's.",
+      "enum": ["message", "work.request", "work.accept", "work.decline", "work.result", "work.cancel", "work.resolve", "verification.pass", "verification.fail", "human.approve", "human.reject", "clock.tick"]
+    },
+    "actor": {
+      "description": "Who spoke, filled by the room from the authenticated sender. `room_service` is the room acting for itself.",
+      "type": "string",
+      "minLength": 1
+    },
+    "work_id": {
+      "description": "The work this event belongs to, or null for events that belong to none. Agent-supplied and unique per room, never a server-minted id.",
+      "type": ["string", "null"]
+    },
+    "to": {
+      "description": "Targets. The envelope's single `to` string becomes a one-element list here; an empty list addresses the room.",
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "payload": { "description": "Type-specific body: `task`, `text`, `t`.", "type": "object" },
+    "refs": { "description": "References out: `result_ref`, `requirement`, `evidence`, `artifacts`, `supersedes`.", "type": "object" },
+    "clauses": {
+      "description": "Obligations attached to the work. `kind` is deliberately unconstrained: an unknown kind is well-formed and admission rejects it with UNKNOWN_TYPED_CLAUSE.",
+      "type": "array",
+      "items": { "type": "object", "required": ["kind"], "properties": { "kind": { "type": "string", "minLength": 1 } } }
+    },
+    "parents": {
+      "description": "Hashes of the events this one answers.",
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "idempotency_key": {
+      "description": "Deduplicates a retried post within a room. Null when the sender supplied none.",
+      "type": ["string", "null"]
+    },
+    "version": {
+      "description": "The protocol this event claims. Absent means the room's own. Deliberately unconstrained: an unsupported value is well-formed and admission rejects it with UNSUPPORTED_PROTOCOL.",
+      "type": "string"
+    }
+  }
+}

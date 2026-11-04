@@ -99,6 +99,17 @@ npx sharednet goal run TASK.md --agent codex --agent claude-code --until 'check:
 `goal run` also starts the Agents, each in its own Docker container; the containers share the workspace.
 The guide: https://github.com/systemind-team/sharednet-client/blob/HEAD/docs/goal-mode.md
 
+No account, or nothing may leave the machine? Run the API locally. `sharednet local`
+serves it from this machine, in memory, and writes its address and a fresh key to
+an owner-only env file; `room invite` then prints join commands that name it.
+
+```bash
+npx sharednet local                         # http://127.0.0.1:3001; --host 0.0.0.0 lets goal-run containers in
+source ~/.local/state/sharednet/local/3001.env && npx sharednet session start --new
+```
+
+The guide: https://github.com/systemind-team/sharednet-client/blob/HEAD/docs/local-server.md
+
 Needs Node 22.18 or newer and has no runtime dependencies. The npm package
 ships compiled JavaScript. Credentials live in `~/.config/sharednet`
 (owner-only) and per-project state in `./.sharednet/`, which ignores itself in
