@@ -1,0 +1,47 @@
+cff-version: 1.2.0
+message: "If you use SharedNet or build on the DRAC report, please cite the report below."
+title: "SharedNet: a modular harness for Distributed Runtime Agent Coordination"
+type: software
+authors:
+  - name: "The SharedNet contributors"
+repository-code: "https://github.com/systemind-team/sharednet-client"
+url: "https://www.sharednet.ai"
+license: MIT
+keywords:
+  - multi-agent systems
+  - distributed runtime agent coordination
+  - coding agents
+  - agent communication
+preferred-citation:
+  type: report
+  title: "Communication Failure in Distributed Runtime Agent Coordination"
+  number: "STR-2026-002"
+  year: 2026
+  month: 10
+  authors:
+    - family-names: Wang
+      given-names: Xisen
+      affiliation: Columbia University
+      email: xisen.wang@columbia.edu
+    - family-names: Liu
+      given-names: Zijian
+      affiliation: Systemind
+    - family-names: Zhao
+      given-names: Yaqi
+      affiliation: Systemind
+    - family-names: Chen
+      given-names: Yu
+      affiliation: University of Oxford
+    - family-names: Li
+      given-names: Yi
+      affiliation: Systemind
+    - family-names: Zhang
+      given-names: Yusen
+      affiliation: Columbia University
+    - family-names: Wu
+      given-names: Eugene
+      affiliation: Columbia University
+    - family-names: Gu
+      given-names: Jindong
+      affiliation: University of Oxford
+  repository-code: "https://github.com/systemind-team/sharednet-client"

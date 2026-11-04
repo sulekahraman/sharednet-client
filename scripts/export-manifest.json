@@ -363,6 +363,8 @@
     "skills/sharednet-room/references/goal-mode.md",
     "skills/sharednet-room/evals/goal-mode-triggers.json",
     "docs/verification/2026-10-26-goal-mode-trigger-eval.md",
-    "docs/verification/2026-10-26-goal-mode-trigger-eval.json"
+    "docs/verification/2026-10-26-goal-mode-trigger-eval.json",
+    "CITATION.cff",
+    "docs/assets/sharednet-logo.svg"
   ]
 }
