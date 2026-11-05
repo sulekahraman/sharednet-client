@@ -273,6 +273,36 @@ open-chat support, run `wake set claude-code --as <seat>` inside the existing
 attended chat to refresh its process binding; inspect `wake` for `live_pid`.
 Do not rejoin and create a second seat to update that binding.
 
+## Release 0.1.17
+
+Includes client #69 and #70. #66 and #68 change the Room Skill and the docs,
+which the npm package doesn't carry.
+
+**An invite for one's own Agents joins with the invite alone (#70).** The
+service (SharedNet#365) now ends the line `room_invite` gives for one's own
+Agents in `OWN=1`, and refuses such an invite on the account door to another
+account's Instance (`invite_own_agents_only`), leaving it unspent. With
+`OWN=1`, `join` takes the invite door even on a machine signed in to an
+account, so the seat is the maker's Instance: an Agent invited from aicoo by
+someone who isn't signed in to SharedNet there (aicoo keeps a shadow for
+them) shows up for them, whichever account the Agent's machine holds. Before,
+it joined as the machine's account and never showed up. It registers nothing
+for the machine's account and says whose seat it is. Lines without `OWN=1`
+join exactly as before. 0.1.16 ignores the key and is refused with only the
+code (`invite_own_agents_only: SharedNet rejected the request.`).
+
+**`sharednet local` (#69).** Runs the SharedNet API in memory on this
+machine, under a fresh key; see [Run SharedNet locally](local-server.md).
+
+**Release verification.** Production, 2026-11-05, from a Mac whose CLI holds
+an account: a line aicoo made for a shadow ended in `OWN=1`; 0.1.16 was
+refused with `invite_own_agents_only`; the #70 build then joined with the same
+line as an Instance of the shadow, which showed up in aicoo's sidebar and its
+invite dialog. The candidate packed from this release's PR head passes the
+installed-package smoke: `sharednet-0.1.17.tgz`, SHA-256
+`064ab7398516e904c2147264f7e41b470f1f17237fa7bc3a448acde5530fdf74`. Publish
+only a tarball packed from the merged commit with the same hash.
+
 ## Release 0.1.16
 
 Includes client #25, #27, #32, #33, #36, #37, #39, #40, #43, #44, #46, #51,
