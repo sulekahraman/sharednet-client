@@ -208,10 +208,12 @@ function parseInvite(
   argument: string,
   parsed: ParsedGuestArguments,
   env: Environment,
-): { roomId: string; token: string; baseUrl: string } {
+): { roomId: string; token: string; baseUrl: string; own: boolean } {
   let roomId: string | undefined;
   let token = stringOption(parsed, "token") ?? env.SHAREDNET_INVITE_TOKEN?.trim() ?? undefined;
   let base: string | undefined;
+  // OWN=1: an invite for one of its maker's own Agents, which seats only with the invite alone.
+  let own = false;
 
   if (ROOM_ID_PATTERN.test(argument)) {
     roomId = argument;
@@ -220,6 +222,7 @@ function parseInvite(
     const pastedToken = /(?:^|\s)TOKEN=(rit_[A-Za-z0-9_-]{43})(?=\s|$)/.exec(argument)?.[1];
     if (pastedToken) token = pastedToken;
     base = /(?:^|\s)BASE=(\S+)(?=\s|$)/.exec(argument)?.[1];
+    own = /(?:^|\s)OWN=1(?=\s|$)/.test(argument);
   }
 
   if (!roomId) {
@@ -239,7 +242,7 @@ function parseInvite(
   }
   // The invite says where the Room lives; an explicit environment wins over it.
   const baseUrl = resolveBaseUrl(env.SHAREDNET_BASE_URL ?? base);
-  return { roomId, token, baseUrl };
+  return { roomId, token, baseUrl, own };
 }
 
 /**
@@ -417,7 +420,7 @@ async function join(args: string[], dependencies: GuestDependencies): Promise<un
     }
     return enterAsSeat(argument, stringOption(parsed, "as"), dependencies, { wake, wakeOff });
   }
-  const { roomId, token, baseUrl } = parseInvite(argument, parsed, dependencies.env);
+  const { roomId, token, baseUrl, own } = parseInvite(argument, parsed, dependencies.env);
   // --runtime, else SHAREDNET_RUNTIME from the harness, else the driver
   // detected. Resolved before anything leaves the machine, so a malformed
   // declaration cannot spend a claim and then fail.
@@ -487,8 +490,10 @@ async function join(args: string[], dependencies: GuestDependencies): Promise<un
 
   // Two doors, one model. With a credential on this machine, the seat is an
   // Instance of the account and the invite only admits it; without one, the
-  // join provisions an anonymous Principal.
-  if (account !== null || await hasAccountCredential(dependencies.env, paths, baseUrl)) {
+  // join provisions an anonymous Principal. An invite for its maker's own
+  // Agents takes the invite alone wherever it runs: the seat is its maker's,
+  // and the service refuses it to another account's Instance.
+  if (!own && (account !== null || await hasAccountCredential(dependencies.env, paths, baseUrl))) {
     // SHAREDNET_API_KEY still wins over the file, as for every account verb.
     const accountKey = dependencies.env.SHAREDNET_API_KEY?.trim() ? undefined : account?.api_key;
     return joinAsAccount(roomId, token, name, chosenName, baseUrl, paths, client, dependencies, reach, agent, wake, runtimeFlag, accountKey);
@@ -542,9 +547,11 @@ async function join(args: string[], dependencies: GuestDependencies): Promise<un
   });
   await historyHandled(client, payload.room.id, memberToken, state.last_sequence, memberId, dependencies);
   if (credential.wake) await writeRoomCredential(paths, credential);
-  // The one moment to say it: this seat belongs to nobody yet.
+  // The one moment to say it: this seat belongs to nobody yet, or to whoever made the invite.
   dependencies.stderr?.(
-    `Joined ${payload.room.id} as ${memberId}, an anonymous seat. Run \`sharednet login\` on this machine to make it yours; it binds every seat this machine holds.\n`,
+    own
+      ? `Joined ${payload.room.id} as ${memberId}, one more Agent of whoever made this invite.\n`
+      : `Joined ${payload.room.id} as ${memberId}, an anonymous seat. Run \`sharednet login\` on this machine to make it yours; it binds every seat this machine holds.\n`,
   );
   if (chosenName === undefined) dependencies.stderr?.(unnamedSeatHint(`"${name}", like every other ${name} seat`));
   const woken = await wakeAfterJoin(credential, `@${name}`, paths, dependencies);

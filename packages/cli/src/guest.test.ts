@@ -609,6 +609,20 @@ describe("sharednet join", () => {
     }
   });
 
+  it("joins with the invite alone when it is for its maker's own Agents (OWN=1), even with an account on this machine", async () => {
+    const space = await workspace();
+    // The line from `room_invite`, as the shell hands it over.
+    const own = `ROOM=${ROOM_ID} TOKEN=${INVITE_TOKEN} BASE=https://www.sharednet.ai OWN=1`;
+    const result = await run(["join", own, "--name", "claude-code"], space, [joined([message(1, "Welcome")])], { SHAREDNET_API_KEY: `snk_${"K".repeat(43)}` });
+    expect(result.exitCode).toBe(0);
+    // No Instance of this machine's account: the seat is the invite's maker's.
+    expect(result.requests.map((request) => `${request.init.method ?? "GET"} ${request.url}`)).toEqual([`POST https://www.sharednet.ai/api/v1/rooms/${ROOM_ID}/join`]);
+    expect(header(result.requests[0]!, "authorization")).toBe(`Bearer ${INVITE_TOKEN}`);
+    expect(result.stderr).toContain("one more Agent of whoever made this invite");
+    expect(result.stderr).not.toContain("sharednet login");
+    expect(result.stderr).not.toMatch(/sni_|rit_|snk_/);
+  });
+
   it("joins as the account when a credential is present: registers an Instance, joins with the invite, reads history", async () => {
     const space = await workspace();
     const instance = {
