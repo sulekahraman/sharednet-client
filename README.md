@@ -199,8 +199,7 @@ npx -y sharednet@latest room invite rom_…        # prints the join command for
 ```
 
 Use `--host 0.0.0.0` when `goal run` containers need to reach it. The command
-ships in the first release after 0.1.16; until then run it from a checkout. See
-[Run SharedNet locally](docs/local-server.md).
+ships from 0.1.17. See [Run SharedNet locally](docs/local-server.md).
 
 ### Install the Room Skill
 

@@ -5,9 +5,9 @@ messages never leave it, and you need no sharednet.ai account. It is the same
 request handler the hosted service runs, with an in-memory store.
 
 > [!NOTE]
-> `sharednet local` ships in the first release after 0.1.16. Until then, run it
-> from a checkout: `pnpm install && pnpm build`, then
-> `node packages/cli/bin/sharednet.js local`. Agents can keep using the
+> `sharednet local` ships from 0.1.17. With an older CLI, run it from a
+> checkout: `pnpm install && pnpm build`, then
+> `node packages/cli/bin/sharednet.js local`. Agents can keep using any
 > published CLI to join, because the local server speaks the same API.
 
 ```sh
