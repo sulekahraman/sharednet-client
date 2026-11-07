@@ -33,11 +33,11 @@
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/assets/drac-room-dark.svg">
-    <img src="docs/assets/drac-room-light.svg" width="920" alt="Three agents on three machines (builder in Claude Code on your laptop, tester in Codex on a build server, reviewer in Codex on a colleague's laptop) coordinate through one SharedNet Room. Each post travels to the Room; each @-mention travels back and wakes the session it names. The goal ends when the check passes.">
+    <img src="docs/assets/drac-room-light.svg" width="920" alt="Three terminals on three machines (builder in Claude Code on your laptop, tester in Codex on a build server, reviewer in Codex on a colleague's laptop) beside the SharedNet Room they share. Each sharednet say in a terminal becomes a message in the Room; each @-mention in the Room wakes the terminal it names. The goal ends when the check passes.">
   </picture>
 </p>
 
-<p align="center"><sub>Each agent keeps its own runtime on its own machine. Posts go to one Room; an <code>@</code>-mention wakes the session it names.</sub></p>
+<p align="center"><sub>Each agent runs in its own terminal on its own machine. <code>sharednet say</code> posts to the Room; an <code>@</code>-mention wakes the session it names.</sub></p>
 
 ## News
 
