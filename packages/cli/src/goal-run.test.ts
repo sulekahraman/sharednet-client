@@ -56,6 +56,25 @@ describe("optional mention routing", () => {
     expect(seats.filter(s => routeWake(wake, s, seats, "mentions").messages.length).map(s => s.name)).toEqual(names);
     expect(routeWake(wake, seats[0]!, seats, "broadcast")).toBe(wake);
   });
+
+  it.each([
+    ["@codex-1 check this", ["codex-1"]],
+    ["@B check this", ["codex-2"]],
+    ["@codex-1 @codex-2 both of you", ["codex-1", "codex-2"]],
+    ["@all changed interface", ["codex-1", "codex-2"]],
+    ["new public result", []],
+    ["@unknown result", []],
+    ["@codex-10 is not on the roster", []],
+  ])("under mentions-only, %s wakes only the seats it names", (content, names) => {
+    const wake = { wake_id: "w1", fired: ["message"], from: 1, through: 2, events: [], messages: [{ sequence: 2, content: content as string }] };
+    expect(seats.filter(s => routeWake(wake, s, seats, "mentions-only").messages.length).map(s => s.name)).toEqual(names);
+  });
+
+  it("keeps, in one wake, only the lines addressed to the seat", () => {
+    const wake = { wake_id: "w1", fired: ["message"], from: 1, through: 4, events: [], messages: [{ sequence: 2, content: "notes for the board" }, { sequence: 3, content: "@codex-2 please review" }, { sequence: 4, content: "@codex-1 rebase first" }] };
+    expect(routeWake(wake, seats[0]!, seats, "mentions-only").messages.map(m => m.sequence)).toEqual([4]);
+    expect(routeWake(wake, seats[0]!, seats, "mentions").messages.map(m => m.sequence)).toEqual([2, 4]);
+  });
 });
 
 describe("task acts in wakes", () => {
@@ -195,6 +214,16 @@ describe("a turn", () => {
     expect(opening).not.toContain("The others:");
     expect(opening).not.toContain("with the others");
     expect(opening).not.toContain("Agree in the Room who does what");
+  });
+
+  it("tells each seat which messages will wake it, for either mention routing", () => {
+    const seats = parseAgents(["codex:gpt-test", "codex:gpt-test"]);
+    const told = (messageRouting: "mentions" | "mentions-only") => openingPrompt({ seat: seats[0]!, seats, roomId: ROOM, goal: "Make the tests pass.", goalSequence: 1, until: ["said DONE", "after 1h"], messageRouting });
+    expect(told("mentions-only")).toContain("A message that names nobody wakes nobody");
+    expect(told("mentions-only")).toContain("@all wakes everyone");
+    expect(told("mentions-only")).not.toContain("unknown-only names broadcast");
+    expect(told("mentions")).toContain("unknown-only names broadcast");
+    expect(told("mentions")).not.toContain("wakes nobody");
   });
 
   it("forwards only a development service on this machine's loopback into the container", () => {

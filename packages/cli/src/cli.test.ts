@@ -333,6 +333,20 @@ describe("reach: forming a group from the account CLI", () => {
     expect(refused.requests).toEqual([]);
   });
 
+  it("takes the three message routings and refuses any other, before anything is sent", async () => {
+    const refused = await harness(["goal", "run", "TASK.md", "--agent", "codex", "--until", "after: 1h", "--message-routing", "loud"], []);
+    expect(refused.exitCode).not.toBe(0);
+    expect(refused.stderr.join(" ")).toContain("--message-routing must be broadcast, mentions or mentions-only");
+    expect(refused.requests).toEqual([]);
+    for (const routing of ["broadcast", "mentions", "mentions-only"]) {
+      // The goal file does not exist, so a routing that is accepted fails on the file instead.
+      const taken = await harness(["goal", "run", "no-such-goal-file.md", "--agent", "codex", "--until", "after: 1h", "--message-routing", routing], []);
+      expect(taken.stderr.join(" ")).not.toContain("--message-routing must be");
+      const compiled = await harness(["goal", "run", "no-such-goal-file.md", "--type", "compiled", "--agent", "codex", "--until", "after: 1h", "--message-routing", routing], []);
+      expect(compiled.stderr.join(" ").includes("plain board Rooms")).toBe(routing !== "broadcast");
+    }
+  });
+
   it("refuses a goal run whose turn limit is shorter than a minute, before anything is sent", async () => {
     const refused = await harness(["goal", "run", "TASK.md", "--agent", "codex", "--until", "after: 1h", "--turn-limit", "30s"], []);
     expect(refused.exitCode).not.toBe(0);

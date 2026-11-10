@@ -615,11 +615,11 @@ async function goalRunCommand(parsed: ParsedArguments, globals: GlobalArguments,
   const harnessMode = namedMode === undefined ? undefined : resolveGoalRunHarnessMode(namedMode);
   const type = harnessMode ? "board" : requestedType;
   const manualMessageRouting = option(parsed, "message-routing");
-  if (manualMessageRouting !== undefined && manualMessageRouting !== "broadcast" && manualMessageRouting !== "mentions") throw localError("invalid_arguments", "--message-routing must be broadcast or mentions.");
+  if (manualMessageRouting !== undefined && manualMessageRouting !== "broadcast" && manualMessageRouting !== "mentions" && manualMessageRouting !== "mentions-only") throw localError("invalid_arguments", "--message-routing must be broadcast, mentions or mentions-only.");
   const mentionGate = harnessMode?.profile.mention_gate ?? (parsed.options.get("mention-gate") === true);
   const taskGate = harnessMode?.profile.task_gate ?? (parsed.options.get("task-gate") === true);
   const messageRouting = harnessMode?.profile.message_routing ?? manualMessageRouting;
-  if (type === "compiled" && (mentionGate || taskGate || messageRouting === "mentions")) {
+  if (type === "compiled" && (mentionGate || taskGate || (messageRouting !== undefined && messageRouting !== "broadcast"))) {
     throw localError("invalid_arguments", "The mention/task gates are for plain board Rooms.");
   }
   if (parsed.positionals.length !== 1) {
