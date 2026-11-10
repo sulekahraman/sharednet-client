@@ -4,13 +4,15 @@ import { chmod, lstat, mkdir, mkdtemp, readFile, readdir, rm, symlink, writeFile
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { clearPendingReply, readPendingReply, writePendingReply, type PendingReply } from "./reply-outbox.ts";
 import { getStoragePaths } from "./storage.ts";
+import * as secureStorage from "./storage.ts";
 
 const roots: string[] = [];
 afterEach(async () => {
+  vi.restoreAllMocks();
   await Promise.all(roots.splice(0).map((root) => rm(root, { recursive: true, force: true })));
 });
 
@@ -35,6 +37,12 @@ async function fixture() {
 }
 
 describe("durable native reply outbox", () => {
+  it("surfaces disk-write failures as a terminal seat error rather than retrying its native turn", async () => {
+    const { paths, reply } = await fixture();
+    vi.spyOn(secureStorage, "writeSecureJson").mockRejectedValueOnce(Object.assign(new Error("synthetic disk full"), { code: "ENOSPC" }));
+    await expect(writePendingReply(paths, reply)).rejects.toMatchObject({ code: "reply_storage_failed", exitCode: 2 });
+  });
+
   it("has no pending delivery before a turn and tolerates clearing an absent file", async () => {
     const { paths, reply } = await fixture();
     expect(await readPendingReply(paths, reply)).toBeNull();

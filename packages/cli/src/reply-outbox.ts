@@ -3,7 +3,7 @@ import { lstat, open, unlink } from "node:fs/promises";
 import { dirname, join } from "node:path";
 
 import { resolveBaseUrl, sameOrigin } from "./api-client.ts";
-import { localError } from "./errors.ts";
+import { CliError, localError } from "./errors.ts";
 import { MAX_MESSAGE_BYTES } from "./protocol/index.ts";
 import {
   ensureSecureDirectory,
@@ -117,37 +117,54 @@ function parsePendingReply(value: unknown, seat: Seat): PendingReply {
   };
 }
 
-export async function readPendingReply(paths: StoragePaths, seat: Seat): Promise<PendingReply | null> {
-  const path = outboxPath(paths, seat);
-  if (!(await secureParents(paths, seat, false))) return null;
-  const raw = await readSecureFile(path);
-  if (raw === null) return null;
-  let value: unknown;
+/** Disk failures are terminal for this seat, not a reason to repeat native work or release
+ * the listener's machine lock while other seats still run. Keep filesystem paths out of logs. */
+async function withOutboxStorage<T>(operation: () => Promise<T>): Promise<T> {
   try {
-    value = JSON.parse(raw);
-  } catch {
-    invalidOutbox();
+    return await operation();
+  } catch (error) {
+    if (error instanceof CliError) throw error;
+    throw localError("reply_storage_failed", "The native reply could not be stored or recovered safely; inspect its session and pending reply before restarting this seat.");
   }
-  return parsePendingReply(value, seat);
+}
+
+export async function readPendingReply(paths: StoragePaths, seat: Seat): Promise<PendingReply | null> {
+  return withOutboxStorage(async () => {
+    const path = outboxPath(paths, seat);
+    if (!(await secureParents(paths, seat, false))) return null;
+    const raw = await readSecureFile(path);
+    if (raw === null) return null;
+    let value: unknown;
+    try {
+      value = JSON.parse(raw);
+    } catch {
+      invalidOutbox();
+    }
+    return parsePendingReply(value, seat);
+  });
 }
 
 export async function writePendingReply(paths: StoragePaths, reply: PendingReply): Promise<void> {
-  const path = outboxPath(paths, reply);
-  const checked = parsePendingReply(reply, reply);
-  await secureParents(paths, reply, true);
-  // Atomic file replacement synchronizes both the file and its parent directory.
-  await writeSecureJson(path, checked);
+  return withOutboxStorage(async () => {
+    const path = outboxPath(paths, reply);
+    const checked = parsePendingReply(reply, reply);
+    await secureParents(paths, reply, true);
+    // Atomic file replacement synchronizes both the file and its parent directory.
+    await writeSecureJson(path, checked);
+  });
 }
 
 export async function clearPendingReply(paths: StoragePaths, seat: Seat): Promise<void> {
-  const path = outboxPath(paths, seat);
-  if (await readPendingReply(paths, seat) === null) return;
-  const noFollow = "O_NOFOLLOW" in constants ? constants.O_NOFOLLOW : 0;
-  const directory = await open(dirname(path), constants.O_RDONLY | noFollow);
-  try {
-    await unlink(path);
-    await directory.sync();
-  } finally {
-    await directory.close();
-  }
+  return withOutboxStorage(async () => {
+    const path = outboxPath(paths, seat);
+    if (await readPendingReply(paths, seat) === null) return;
+    const noFollow = "O_NOFOLLOW" in constants ? constants.O_NOFOLLOW : 0;
+    const directory = await open(dirname(path), constants.O_RDONLY | noFollow);
+    try {
+      await unlink(path);
+      await directory.sync();
+    } finally {
+      await directory.close();
+    }
+  });
 }
