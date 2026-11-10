@@ -12,7 +12,7 @@ import { runCli } from "./cli.ts";
 import type { CommandRunner } from "./guest.ts";
 import { processAlive, systemProcessProbe, type ProcessProbe } from "./process-identity.ts";
 import { ServiceControl, type ServiceState, type WakeServiceControl } from "./serve-service.ts";
-import { getStoragePaths, writeSession } from "./storage.ts";
+import { getStoragePaths, writeRoomCredential, writeSession } from "./storage.ts";
 import type { CheckOptions, CheckResult, CheckStep, SeatWake, TurnRunner, TurnSpec } from "./wake-driver.ts";
 
 const cleanup: string[] = [];
@@ -2266,7 +2266,8 @@ describe("sharednet say and wait", () => {
       ], CODEX, { service, runTurn, signal: stop.signal, sleep: () => new Promise((resolve) => setTimeout(resolve, 5)), rescanMs: 5 });
       try {
         await vi.waitFor(() => expect(service.acked_through).toBe(2), { timeout: 2_000 });
-        await writeFile(join(space.env.XDG_CONFIG_HOME!, "sharednet", "rooms", ROOM_ID, `${MEMBER_ID}.json`), JSON.stringify(credential), { mode: 0o600 });
+        // Use the same atomic replacement as `wake set`; truncating writeFile races the listener's reader.
+        await writeRoomCredential(getStoragePaths(space.env), credential);
         await vi.waitFor(() => expect(turns).toHaveLength(2), { timeout: 2_000 });
       } finally {
         stop.abort();
