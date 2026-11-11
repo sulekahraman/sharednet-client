@@ -337,14 +337,17 @@ export interface WakeShape {
   through: number;
 }
 
-export type MessageRouting = "broadcast" | "mentions";
-/** Routing chooses wake recipients, not board visibility. Unknown-only handles broadcast. */
+export type MessageRouting = "broadcast" | "mentions" | "mentions-only";
+/**
+ * Routing chooses wake recipients, not board visibility. A message that names no known seat
+ * wakes everyone under `mentions` and nobody under `mentions-only`; `@all` wakes everyone in both.
+ */
 export function routeWake(wake: WakeShape, seat: { name: string }, seats: Array<{ name: string; member_id?: string | null }>, mode: MessageRouting): WakeShape {
   if (mode === "broadcast") return wake;
   return { ...wake, messages: wake.messages.filter(message => {
     if (mentions(message.content, { memberId: "", name: "all" })) return true;
     const recipients = seats.filter(other => mentions(message.content, { memberId: other.member_id ?? "", name: other.name }));
-    return recipients.length === 0 || recipients.some(other => other.name === seat.name);
+    return recipients.length === 0 ? mode === "mentions" : recipients.some(other => other.name === seat.name);
   }) };
 }
 
@@ -380,6 +383,9 @@ export function openingPrompt(input: { seat: AgentSpec; seats: Array<AgentSpec &
     ...(input.messageRouting === "mentions" ? [
       "Messages mentioning known teammates wake only those teammates. No mention, @all, or unknown-only names broadcast. Explicit board reads still show all messages. Use exact teammate names from the roster.",
       "Do not run `sharednet wait` or `sharednet watch`: end your turn when waiting; the runner supplies messages routed to you.",
+    ] : input.messageRouting === "mentions-only" ? [
+      "A message wakes only the teammates it names with @name, using the exact names from the roster; @all wakes everyone. A message that names nobody wakes nobody: it stays on the board for whoever reads it. When someone else must act on what you say, name them, or nobody will.",
+      "Do not run `sharednet wait` or `sharednet watch`: end your turn when waiting; the runner supplies messages addressed to you.",
     ] : ["Do not run `sharednet wait` or `sharednet watch`: when your turn ends, you are woken with whatever is said next."]),
     "Lines from `runner` are the goal's machinery, such as a check's result, not a person.",
     single
@@ -597,7 +603,7 @@ export async function runGoal(
     throw localError("harness_model_required", "A frozen --harness-mode requires every Agent to pin its model.");
   }
   if (input.harnessMode) assertGoalRunHarnessAgentCount(input.harnessMode, plan.agents.length);
-  if (input.roomType === "compiled" && (input.mentionGate || input.taskGate || messageRouting === "mentions")) throw localError("invalid_arguments", "The mention/task controls are for plain board Rooms.");
+  if (input.roomType === "compiled" && (input.mentionGate || input.taskGate || messageRouting !== "broadcast")) throw localError("invalid_arguments", "The mention/task controls are for plain board Rooms.");
   const codeProvenance = input.codeProvenance ?? await discoverCodeProvenance(plan.cli);
   if (input.harnessMode && codeProvenance.sourceWorktreeDirty) {
     throw localError("dirty_harness_source", "A frozen --harness-mode cannot run from a dirty sharednet-client checkout; commit or stash the CLI changes first.");
@@ -834,7 +840,7 @@ export async function runGoal(
           wake = routeWake(raw, seat, records, messageRouting);
           if (input.taskGate) wake = withoutTaskActs(wake);
           const delivered = wake.messages.map(message => message.sequence);
-          if (messageRouting === "mentions" || input.taskGate) await appendFile(join(input.out, "routing.ndjson"), `${JSON.stringify({ at: dependencies.now().toISOString(), seat: seat.name, wake_id: raw.wake_id, from: raw.from, through: raw.through, delivered, skipped: raw.messages.filter(m => !delivered.includes(m.sequence)).map(m => m.sequence), model_wake: delivered.length > 0 })}\n`);
+          if (messageRouting !== "broadcast" || input.taskGate) await appendFile(join(input.out, "routing.ndjson"), `${JSON.stringify({ at: dependencies.now().toISOString(), seat: seat.name, wake_id: raw.wake_id, from: raw.from, through: raw.through, delivered, skipped: raw.messages.filter(m => !delivered.includes(m.sequence)).map(m => m.sequence), model_wake: delivered.length > 0 })}\n`);
           if (delivered.length > 0 || (messageRouting === "broadcast" && !input.taskGate)) break;
           if (raw.wake_id) await exec(seat, ["sharednet", "ack", raw.wake_id, "--json"]);
         }
@@ -852,7 +858,8 @@ export async function runGoal(
       client,
       memberToken,
       apiKey,
-      { roomId: input.roomId, workspace: plan.workspace, out: input.out, checkEveryMs: input.checkEveryMs, quietChecks: input.quietChecks },
+      // Under mentions-only an unaddressed line wakes nobody, so a failing check is said to the seat that claimed.
+      { roomId: input.roomId, workspace: plan.workspace, out: input.out, checkEveryMs: input.checkEveryMs, quietChecks: input.quietChecks, ...(messageRouting === "mentions-only" ? { feedbackToClaimant: true } : {}) },
       {
         now: dependencies.now,
         ...(dependencies.sleep ? { sleep: dependencies.sleep } : {}),
