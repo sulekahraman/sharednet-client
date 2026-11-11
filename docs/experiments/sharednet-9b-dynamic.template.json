@@ -5,6 +5,9 @@
   "frozen_at": null,
   "design": {
     "model_family": "Qwen3.5-9B",
+    "model_provider": "OpenRouter",
+    "model_api_base_url": "https://openrouter.ai/api/v1",
+    "native_subagents_enabled": false,
     "team_size": 4,
     "organization": "dynamic",
     "learning_seats": 1,
@@ -16,7 +19,7 @@
   },
   "unresolved_decisions": [
     "Integrated runner commit, package, Codex version and image digests; capability evidence for open-model isolation and disabled native subagents",
-    "Exact model/provider revisions, seat identities, frozen partners, tokenizer, serialization and provider fallback policy",
+    "Exact OpenRouter model ID/revision, backend routing/fallback settings, seat identities, frozen partners, tokenizer and serialization",
     "Task inventory, grouped splits, difficulty source and exclusion of previously inspected pilot tasks",
     "Routing, gates, initiation, termination, verifier feedback and idle policy",
     "Team and per-turn budgets, token accounting and overshoot, sampling, context and compaction settings",

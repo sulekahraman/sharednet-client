@@ -69,6 +69,23 @@ test("removing a required evidence category or changing the study design blocks 
   assert(errors.some(error => error.includes("design must match")));
 });
 
+test("the freeze gate rejects another provider, endpoint or enabled native subagents", async (t) => {
+  const f = await fixture(t);
+  const design = { ...f.manifest.design, model_provider: "OpenRouter", model_api_base_url: "https://openrouter.ai/api/v1", native_subagents_enabled: false };
+  f.manifest.design = design;
+  await f.save();
+  assert.deepEqual((await checkExperimentProtocol(f.path)).errors, []);
+  for (const [field, value] of [
+    ["model_provider", "Other"],
+    ["model_api_base_url", "https://example.invalid/api/v1"],
+    ["native_subagents_enabled", true],
+  ]) {
+    f.manifest.design = { ...design, [field]: value };
+    await f.save();
+    assert((await checkExperimentProtocol(f.path)).errors.some(error => error.includes("design must match")), field);
+  }
+});
+
 test("changed bytes and stale approvals cannot silently reuse a freeze", async (t) => {
   const f = await fixture(t);
   await writeFile(join(f.root, "runner_build.json"), '{"changed":true}');

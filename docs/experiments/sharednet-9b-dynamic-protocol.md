@@ -2,10 +2,33 @@
 
 **Status: draft, not an approved experimental freeze.** The accompanying
 [manifest template](sharednet-9b-dynamic.template.json) deliberately fails the
-freeze check. Task assignments, provider revisions, budgets, termination and
-training recipes must be resolved from development pilots, not invented here.
+freeze check. Task assignments, exact model/backend identities, budgets,
+termination and training recipes must be resolved from development pilots,
+not invented here.
 This protocol adds no runner flags, launches no model calls, and claims no
 live-run validation.
+
+## Confirmed study controls
+
+| Control | Decided value |
+| --- | --- |
+| Model family | Qwen3.5-9B |
+| Experiment provider/router | OpenRouter |
+| Model API base URL | `https://openrouter.ai/api/v1` |
+| Native Codex subagents | Disabled on every initial and resumed turn |
+
+These are study decisions, not claims that a particular run has already
+verified them. The template records them as design invariants. OpenRouter's
+[Responses API](https://openrouter.ai/docs/api/api-reference/responses/create-responses)
+uses the `/responses` path under this base URL. The exact model ID/revision
+and upstream backend routing/fallback policy still require an explicit pin
+or a documented limitation.
+
+Use #75's `features.multi_agent=false` and `features.multi_agent_v2=false`
+configuration and preserve actual tool-list evidence for initial and resumed
+turns. This disables nested native subagents, not the four explicitly
+launched SharedNet seats. Keep the integrated-build and capability-evidence
+blockers until verified; deciding a setting is not proof of enforcement.
 
 ## Research comparison
 
@@ -31,7 +54,7 @@ not an equal-training-budget optimizer comparison.
 
 | Capability | Current implementation work | Freeze requirement |
 | --- | --- | --- |
-| Qwen/custom endpoint, isolation and inference controls | [#74](https://github.com/systemind-team/sharednet-client/pull/74) | Pin the integrated source/build; verify the selected endpoint, network and model controls. |
+| Qwen/custom endpoint, isolation and inference controls | [#74](https://github.com/systemind-team/sharednet-client/pull/74) | Pin the integrated source/build; verify the OpenRouter endpoint, network and model controls. |
 | No hidden native Codex subagents | [#75](https://github.com/systemind-team/sharednet-client/pull/75), which includes #74's work | Verify the actual tool list on initial and resumed turns; preserve evidence. |
 | Cooperative opening instructions and wake reminder | [#78](https://github.com/systemind-team/sharednet-client/pull/78) | Explicitly select `--turn-policy cooperative-v1` and preserve both templates. |
 | Alternative initiation/completion policies | [#63](https://github.com/systemind-team/sharednet-client/pull/63) | Required only when selecting those semantics; verify them after integration. |
@@ -66,7 +89,7 @@ local control documents, not remote binaries or provider behavior.
 | Artifact key | Required reviewed content |
 | --- | --- |
 | `runner_build` | Integrated client/runner commit, clean-source evidence, exact package/tarball checksum, Codex version, image digests, worker OS and CPU/memory constraints; capability tests and relevant PR provenance. Do not claim a moving image tag or `latest` is a pin. |
-| `models_and_seats` | All four seat IDs, designated learner and three fixed partners; exact base revisions, tokenizer/tool serialization, provider/serving versions, routing/fallback settings. Document unavailable checkpoint pins as a limitation, not an immutable guarantee. |
+| `models_and_seats` | All four seat IDs, designated learner and three fixed partners; exact OpenRouter model ID/base revisions, tokenizer/tool serialization, backend/serving identity and routing/fallback settings. Match the confirmed OpenRouter base URL. Document unavailable checkpoint pins as a limitation, not an immutable guarantee. |
 | `prompts` | Exact opening, wake, task and compaction templates; extra instruction files; rendered per-seat prompt hashes for pilots. Identify Codex's native prompt/tool stack separately: opening-prompt hashes do not cover the whole model input. |
 | `tasks_and_splits` | Benchmark revision, task IDs and difficulty source, related-task grouping, train/dev/test assignments before collection, fixture hashes and pilot exclusions. Record Frontier Science's evaluation-only boundary and previously inspected tasks. |
 | `launch_and_controls` | Exact executable/argv template and non-secret settings; board topology, shared workspace/separate histories, startup, routing/gates, per-seat concurrency, tool/network permissions, reference-query quota, sampling/reasoning, context/compaction/truncation, per-turn/team budgets and worker limits. Define completion/quiescence/idle rules, verifier timing/feedback, cancellation and artifact capture. Distinguish token thresholds from externally enforced hard caps and record expected overshoot. |
