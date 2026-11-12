@@ -42,13 +42,59 @@ planner/coder/tester job. Compare:
 | B | Selective-SFT checkpoint | Same |
 | C | B's checkpoint followed by RL | Same |
 
-Use `cooperative-v1` for every seat in all three arms. Do not mix the legacy
-prompt into A and attribute a prompt change to training in B/C. ProgramBench
+`cooperative-v1` is a candidate pending integrated-build pilots, not an
+accepted common control. Freeze the selected opening and wake policies for
+every seat in all three arms. Do not mix the legacy prompt into A and
+attribute a prompt change to training in B/C. ProgramBench
 is the training and primary evaluation benchmark. Frontier Science is
 evaluation-only; previously inspected tasks are pilots, not untouched tests.
 There is no outcome-only SFT arm, so this study does not isolate the benefit of
 selective masking. C also uses additional experience/compute; C-minus-B is
 not an equal-training-budget optimizer comparison.
+
+## Development-pilot budget and reported baseline
+
+The selected initial development-pilot budget is **60 minutes and 10 million
+team-wide fresh tokens**, stopping when either budget bound is reached (or
+an independently selected completion condition fires earlier). Fresh tokens
+mean uncached input plus output across all four seats. Record observed usage,
+elapsed time and any threshold overshoot; a token threshold is not a
+guaranteed exact hard cap. This decision does not freeze the final A/B/C
+experimental budget or the per-turn limit.
+
+Aziz's team-shared launch configuration reports four
+`codex:qwen/qwen3.5-9b` seats through OpenRouter, `--isolate`,
+`--agent-user agent`, `--quiet-checks`, task image `pb-goal/<task>:2`,
+reasoning `low`, context window 262144, compaction at 150000, and:
+
+```text
+--until "said: DONE" --until "after: 60m" --until "budget: 10M tokens"
+--consensus --remind 2m
+```
+
+He reports Codex CLI 0.162.1 with Chengrui's consensus/remind branch plus
+the native-subagent disabling commit, broadcast routing, and task instructions
+from `TASK.md` plus `NOTE.md`, sometimes also `ROLES4.md`. Inventory their
+exact contents rather than assuming these variants are equivalent.
+These are reported pilot settings, not independently verified run artifacts
+or newly selected final study controls.
+
+The reported consensus rule requires each agent to independently post
+`DONE`. Idle reminders require both no executing agent turns and no new room
+messages for two minutes; they are not an unconditional two-minute timer.
+Aziz reports reminders firing, a single-agent DONE completing, but no
+team-wide consensus completion. Preserve the actual stop reason and a
+separate consensus-reached status; a budget stop is not consensus completion.
+Verify confirmation invalidation and workspace-change semantics in the
+selected implementation rather than assuming #63 and this branch agree.
+
+Aziz also reports a `--turn-limit 5m` rerun versus the original 20-minute
+turn limit. Shorter turns enabled delivery but did not solve sparse posting;
+timed-out turns appeared to receive the same wake twice. Pilot #78 with a
+short turn limit, investigate timeout acknowledgements and repeated wake/
+reminder delivery, and choose the final limit from development evidence.
+Do not treat the five-minute candidate or the acknowledgment diagnosis as
+validated. Keep these tasks out of the untouched evaluation split.
 
 ## Integrate capabilities, not PR numbers
 
@@ -56,7 +102,8 @@ not an equal-training-budget optimizer comparison.
 | --- | --- | --- |
 | Qwen/custom endpoint, isolation and inference controls | [#74](https://github.com/systemind-team/sharednet-client/pull/74) | Pin the integrated source/build; verify the OpenRouter endpoint, network and model controls. |
 | No hidden native Codex subagents | [#75](https://github.com/systemind-team/sharednet-client/pull/75), which includes #74's work | Verify the actual tool list on initial and resumed turns; preserve evidence. |
-| Cooperative opening instructions and wake reminder | [#78](https://github.com/systemind-team/sharednet-client/pull/78) | Explicitly select `--turn-policy cooperative-v1` and preserve both templates. |
+| Candidate cooperative opening instructions and wake reminder | [#78](https://github.com/systemind-team/sharednet-client/pull/78) | Pilot with a short turn limit before selection; if accepted, explicitly select `--turn-policy cooperative-v1` and preserve both templates. |
+| Consensus completion and quiescent-room reminders | [Chengrui's goal-run-consensus-remind branch](https://github.com/Coderlicr/sharednet-client/tree/5310308daef07bd21d040e634cf9e54110faf11a) | Source snapshot at documentation update, not proof of Aziz's exact build. Integrate with #75 and any selected #78 changes; pin and verify the resulting revision, stop rules, reminder predicates and timeout acknowledgements. |
 | Alternative initiation/completion policies | [#63](https://github.com/systemind-team/sharednet-client/pull/63) | Required only when selecting those semantics; verify them after integration. |
 
 These are separate PRs, not proof of an integrated or deployed package. This
@@ -93,12 +140,12 @@ local control documents, not remote binaries or provider behavior.
 | `prompts` | Exact opening, wake, task and compaction templates; extra instruction files; rendered per-seat prompt hashes for pilots. Identify Codex's native prompt/tool stack separately: opening-prompt hashes do not cover the whole model input. |
 | `tasks_and_splits` | Benchmark revision, task IDs and difficulty source, related-task grouping, train/dev/test assignments before collection, fixture hashes and pilot exclusions. Record Frontier Science's evaluation-only boundary and previously inspected tasks. |
 | `launch_and_controls` | Exact executable/argv template and non-secret settings; board topology, shared workspace/separate histories, startup, routing/gates, per-seat concurrency, tool/network permissions, reference-query quota, sampling/reasoning, context/compaction/truncation, per-turn/team budgets and worker limits. Define completion/quiescence/idle rules, verifier timing/feedback, cancellation and artifact capture. Distinguish token thresholds from externally enforced hard caps and record expected overshoot. |
-| `evaluation` | Authorized agent-visible checks versus held-out grading, evaluator revisions/hashes, invalid-build/timeout rules, official score versus raw pass fraction and denominator, cost metrics, snapshot-before-hidden-grading rule. No hidden feedback enters actor context. |
+| `evaluation` | Authorized agent-visible checks versus held-out grading, evaluator revisions/hashes, invalid-build/timeout rules, official score versus raw pass fraction and denominator, cost metrics, snapshot-before-hidden-grading rule. Build the final submission with `./compile.sh` from a clean copy using the benchmark's documented environment; record command, exit status and output, and post the result through a declared agent-visible check only if authorized. Preserve the snapshot before checks. Keep packaging/build failures distinct from semantic failures without silently excluding model-caused failures from scores. No hidden feedback enters actor context. |
 | `sft_recipe` | Training-only 9B data provenance; learner-only recorded targets and exact causal local prefixes; evidence-based retention, rejected-token masking, complete tool-call boundaries, deduplication, curriculum, human audit and uncertainty rules. Pin selection code/rubric, optimizer, LoRA settings, seeds, training budget and dev-only checkpoint-selection rule. Do not silently include GPT/27B demonstrations. |
 | `rl_recipe` | Initialization from B, learner seat/frozen partners, episode grouping, authorized reward, advantage/objective, zero-variance handling, deterministic tool penalties, KL choice, optimizer/LoRA settings, seeds, collection/update synchronization, budget and dev-only checkpoint selection. Semantic failure labels are diagnostic/SFT metadata unless separately preregistered as rewards. |
 | `annotation_and_audit` | Failure rubric/schema, annotator revision/prompt, evidence alignment, uncertainty/disagreement resolution, human sampling plan and reporting. Separate runner failures from policy errors; publication is not proof of observation. |
 | `replication_and_exclusions` | Exact repeats, supported seed semantics and provider nondeterminism, randomized task/arm order, infrastructure exclusions/reruns, handling of valid policy failures and zero-return groups. Retain all attempts; never rerun only unfavorable policy outcomes. |
-| `pilot_acceptance` | Development run IDs and results proving model/tool population, isolation, initial/resumed prompt delivery, wake routing, observed local message IDs, context handling, token accounting, stop semantics and artifact recovery. Inspect premature yielding, all-blocked teams and message-only loops. Fake-service tests are not live-model evidence. |
+| `pilot_acceptance` | AWS development run IDs, exact integrated build and results proving model/tool population, isolation, initial/resumed prompt delivery, wake routing and timeout acknowledgements, observed local message IDs, context handling, token accounting, consensus/idle semantics, clean-copy build and artifact recovery. Record AWS worker resources and image digests. Earlier teammate runs are preliminary evidence, not acceptance of a different build. Inspect premature yielding, all-blocked teams, repeated wakes/reminders and message-only loops. Fake-service tests are not live-model evidence. |
 | `approval` | Human review of every control document and open decision, using the approval record below. |
 
 Unknowns remain `null`, empty values, or explicit entries in

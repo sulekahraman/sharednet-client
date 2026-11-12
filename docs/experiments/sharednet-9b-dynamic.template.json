@@ -13,21 +13,29 @@
     "learning_seats": 1,
     "partner_policy": "three-frozen-partners",
     "arms": ["base", "selective-sft", "selective-sft-rl"],
-    "common_turn_policy": "cooperative-v1",
     "primary_benchmark": "ProgramBench",
     "frontier_science": "evaluation-only"
+  },
+  "development_pilot_plan": {
+    "scope": "Development tasks only; not the final A/B/C experimental budget",
+    "wall_clock_minutes": 60,
+    "team_fresh_token_threshold": 10000000,
+    "budget_stop_rule": "Stop on the first budget bound reached; record observed usage and overshoot",
+    "fresh_token_definition": "Uncached input plus output across all four seats",
+    "turn_policy_candidate": "cooperative-v1; requires an integrated-build pilot before selection"
   },
   "unresolved_decisions": [
     "Integrated runner commit, package, Codex version and image digests; capability evidence for open-model isolation and disabled native subagents",
     "Exact OpenRouter model ID/revision, backend routing/fallback settings, seat identities, frozen partners, tokenizer and serialization",
     "Task inventory, grouped splits, difficulty source and exclusion of previously inspected pilot tasks",
-    "Routing, gates, initiation, termination, verifier feedback and idle policy",
-    "Team and per-turn budgets, token accounting and overshoot, sampling, context and compaction settings",
+    "Common turn policy after piloting cooperative-v1; preserve opening and wake templates and use the same selected policy across A/B/C",
+    "Routing, gates, initiation, termination, verifier feedback and idle policy; integrate and verify Chengrui's consensus/remind branch or the selected alternative",
+    "Final experimental team and per-turn budgets after 60-minute/10M-fresh-token development pilots; verify timeout wake acknowledgements, accounting and overshoot; sampling, context and compaction settings",
     "Worker resources, tool/network permissions and reference-query allowance",
     "Evaluator snapshots, score definitions, repeats, seeds, run order and exclusions",
     "Selective-SFT selection/audit rules, training recipe and development-only checkpoint selection",
     "RL recipe, rewards, penalties, training budget and development-only checkpoint selection",
-    "Acceptance pilots and human approval of the complete artifact inventory"
+    "AWS acceptance pilots on the exact integrated build, clean-copy compile.sh check and human approval of the complete artifact inventory"
   ],
   "artifacts": {
     "runner_build": { "path": null, "sha256": null },
